@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Microphone allowed for this Vercel page -->
+  <meta http-equiv="Permissions-Policy" content="microphone=(self)">
+
+  <title>Live Call Copilot</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 25px;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #111;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-blue {
+      border-left: 6px solid #0d6efd;
+    }
+
+    .card-cyan {
+      border-left: 6px solid #0dcaf0;
+    }
+
+    .card-purple {
+      border-left: 6px solid #6f42c1;
+    }
+
+    .card-green {
+      border-left: 6px solid #198754;
+    }
+
+    button {
+      padding: 11px 18px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 7px 8px 0;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0b5ed7;
+    }
+
+    .btn-start {
+      background: #198754;
+      color: white;
+    }
+
+    .btn-start:hover {
+      background: #157347;
+    }
+
+    .btn-stop {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-stop:hover {
+      background: #bb2d3b;
+    }
+
+    .btn-test {
+      background: #0dcaf0;
+      color: #111;
+    }
+
+    .btn-record {
+      background: #6f42c1;
+      color: white;
+    }
+
+    .status {
+      font-weight: 700;
+      color: #dc3545;
+    }
+
+    .status.active {
+      color: #198754;
+    }
+
+    .success {
+      color: #198754;
+      font-weight: 700;
+    }
+
+    .error {
+      color: #dc3545;
+      font-weight: 700;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .suggestion-box {
+      min-height: 65px;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0056b3;
+      background: #e9f2ff;
+      padding: 16px;
+      border-left: 5px solid #0056b3;
+      border-radius: 5px;
+    }
+
+    .transcript-box {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 7px;
+      min-height: 70px;
+      line-height: 1.6;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border: 1px solid #ffe69c;
+      padding: 15px;
+      border-radius: 7px;
+      margin-bottom: 18px;
+    }
+
+    .info {
+      background: #e7f1ff;
+      border: 1px solid #b6d4fe;
+      padding: 15px;
+      border-radius: 7px;
+      margin-bottom: 18px;
+    }
+
+    .top-title {
+      margin-bottom: 25px;
+    }
+
+    #bridgeFrame {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      border: 0;
+      left: -9999px;
+      top: -9999px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .suggestion-box {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1 class="top-title">Live Call Copilot</h1>
+
+  <!-- ===================================================== -->
+  <!-- APPS SCRIPT BRIDGE -->
+  <!-- ===================================================== -->
+
+  <iframe
+    id="bridgeFrame"
+    title="Apps Script Bridge">
+  </iframe>
+
+
+  <!-- ===================================================== -->
+  <!-- MICROPHONE PERMISSION -->
+  <!-- ===================================================== -->
+
+  <div class="card card-blue">
+
+    <h3>🎤 Microphone Permission</h3>
+
+    <p>
+      Before using Live Call Copilot, allow microphone access.
+    </p>
+
+    <button
+      id="micPermissionBtn"
+      class="btn-primary"
+      onclick="requestMicrophonePermission()">
+      Allow Microphone
+    </button>
+
+    <div
+      id="micPermissionStatus"
+      class="error">
+      Microphone permission not granted.
+    </div>
+
+    <p class="muted">
+      Click the button and select <b>Allow</b> when Chrome asks for microphone access.
+    </p>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- MICROPHONE TEST -->
+  <!-- ===================================================== -->
+
+  <div class="card card-cyan">
+
+    <h3>🎤 Microphone Test & Playback</h3>
+
+    <p>
+      Record your voice for 3 seconds to verify your microphone.
+    </p>
+
+    <button
+      id="testMicBtn"
+      class="btn-test"
+      onclick="testMicrophone()"
+      disabled>
+      Test Mic (3-sec Record)
+    </button>
+
+    <span id="testStatus"></span>
+
+    <audio
+      id="audioPlayback"
+      controls>
+    </audio>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- AUDIO RECORDING -->
+  <!-- ===================================================== -->
+
+  <div class="card card-purple">
+
+    <h3>🔴 Audio Recorder</h3>
+
+    <p>
+      Record audio and save it automatically to Google Drive.
+    </p>
+
+    <div class="row">
+
+      <button
+        id="recordBtn"
+        class="btn-record"
+        onclick="toggleRecording()"
+        disabled>
+        Start Recording
+      </button>
+
+      <span id="recordStatus"></span>
+
+    </div>
+
+    <audio
+      id="recordPlayback"
+      controls>
+    </audio>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- LIVE COPILOT -->
+  <!-- ===================================================== -->
+
+  <div class="card card-green">
+
+    <h3>🎧 Live Call Copilot</h3>
+
+    <p>
+      Live Copilot Status:
+      <span
+        id="status"
+        class="status">
+        Offline
+      </span>
+    </p>
+
+    <button
+      id="toggleBtn"
+      class="btn-start"
+      onclick="toggleListening()"
+      disabled>
+      Start Live Copilot
+    </button>
+
+    <div
+      id="speechSupport"
+      class="muted">
+      Checking speech recognition support...
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- TRANSCRIPT -->
+  <!-- ===================================================== -->
+
+  <div class="card">
+
+    <h3>📝 Live Transcript</h3>
+
+    <div
+      id="transcript"
+      class="transcript-box">
+      <i>Waiting for speech...</i>
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- AI SUGGESTION -->
+  <!-- ===================================================== -->
+
+  <div class="card">
+
+    <h3>🤖 AI Recommended One-Liner</h3>
+
+    <div
+      id="suggestion"
+      class="suggestion-box">
+      Suggestions will appear here live during the call.
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- INFORMATION -->
+  <!-- ===================================================== -->
+
+  <div class="info">
+
+    <b>System:</b>
+
+    Microphone and recording run on Vercel.
+    Google Apps Script is used only for AI processing
+    and Google Drive storage.
+
+  </div>
+
+
+  <div class="warning">
+
+    <b>Important:</b>
+
+    Open this application using the HTTPS Vercel URL.
+    Do not open the HTML file directly from your computer.
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // =========================================================
+  // CONFIGURATION
+  // =========================================================
+
+  const CONFIG = {
+
+    // Replace this with your Apps Script /exec URL
+    APPS_SCRIPT_BRIDGE_URL:
+      "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+
+    // Google Drive folder name
+    RECORD_FOLDER_NAME:
+      "Live Call Copilot Recordings"
+
+  };
+
+
+  // =========================================================
+  // GLOBAL VARIABLES
+  // =========================================================
+
+  let recognition = null;
+
+  let isListening = false;
+
+  let microphoneGranted = false;
+
+  let mediaRecorder = null;
+
+  let recordChunks = [];
+
+  let bridgeReady = false;
+
+  let bridgeQueue = [];
+
+  let currentRecordStream = null;
+
+
+  // =========================================================
+  // HELPER
+  // =========================================================
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+
+  // =========================================================
+  // CHECK CONFIGURATION
+  // =========================================================
+
+  function checkConfiguration() {
+
+    if (
+      !CONFIG.APPS_SCRIPT_BRIDGE_URL ||
+      CONFIG.APPS_SCRIPT_BRIDGE_URL.includes(
+        "PASTE_YOUR_APPS_SCRIPT"
+      )
+    ) {
+
+      $("suggestion").innerText =
+        "⚠️ Apps Script bridge URL is not configured.";
+
+      console.error(
+        "Please configure APPS_SCRIPT_BRIDGE_URL."
+      );
+
+      return false;
+
+    }
+
+    return true;
+
+  }
+
+
+  // =========================================================
+  // LOAD APPS SCRIPT BRIDGE
+  // =========================================================
+
+  function loadBridge() {
+
+    if (!checkConfiguration()) {
+      return;
+    }
+
+    $("bridgeFrame").src =
+      CONFIG.APPS_SCRIPT_BRIDGE_URL;
+
+  }
+
+
+  // =========================================================
+  // RECEIVE MESSAGES FROM APPS SCRIPT
+  // =========================================================
+
+  window.addEventListener(
+    "message",
+    function(event) {
+
+      const data = event.data;
+
+      if (
+        !data ||
+        typeof data !== "object"
+      ) {
+        return;
+      }
+
+
+      // -----------------------------------------------
+      // Bridge ready
+      // -----------------------------------------------
+
+      if (
+        data.type ===
+        "APPS_SCRIPT_BRIDGE_READY"
+      ) {
+
+        bridgeReady = true;
+
+        console.log(
+          "Apps Script bridge is ready."
+        );
+
+        $("suggestion").innerText =
+          "Suggestions will appear here live during the call.";
+
+        flushBridgeQueue();
+
+        return;
+      }
+
+
+      // -----------------------------------------------
+      // AI suggestion result
+      // -----------------------------------------------
+
+      if (
+        data.type ===
+        "GENERATE_ONE_LINER_RESULT"
+      ) {
+
+        if (data.success) {
+
+          $("suggestion").innerText =
+            data.result ||
+            "No suggestion generated.";
+
+        } else {
+
+          $("suggestion").innerText =
+            "❌ AI Error: " +
+            (
+              data.error ||
+              "Unable to generate suggestion."
+            );
+
+        }
+
+        return;
+      }
+
+
+      // -----------------------------------------------
+      // Audio save result
+      // -----------------------------------------------
+
+      if (
+        data.type ===
+        "AUDIO_SAVE_RESULT"
+      ) {
+
+        if (data.success) {
+
+          $("recordStatus").innerText =
+            "✅ Audio saved to Google Drive.";
+
+          $("recordStatus").className =
+            "success";
+
+          console.log(
+            "Saved file:",
+            data.result
+          );
+
+        } else {
+
+          $("recordStatus").innerText =
+            "❌ Save failed: " +
+            (
+              data.error ||
+              "Unknown error."
+            );
+
+          $("recordStatus").className =
+            "error";
+        }
+
+        return;
+      }
+
+    }
+  );
+
+
+  // =========================================================
+  // SEND MESSAGE TO APPS SCRIPT BRIDGE
+  // =========================================================
+
+  function sendToBridge(message) {
+
+    if (!bridgeReady) {
+
+      bridgeQueue.push(message);
+
+      console.log(
+        "Bridge not ready. Message queued."
+      );
+
+      return;
+
+    }
+
+
+    $("bridgeFrame")
+      .contentWindow
+      .postMessage(
+        message,
+        "*"
+      );
+
+  }
+
+
+  // =========================================================
+  // SEND QUEUED MESSAGES
+  // =========================================================
+
+  function flushBridgeQueue() {
+
+    if (!bridgeReady) {
+      return;
+    }
+
+    while (
+      bridgeQueue.length > 0
+    ) {
+
+      const message =
+        bridgeQueue.shift();
+
+      $("bridgeFrame")
+        .contentWindow
+        .postMessage(
+          message,
+          "*"
+        );
+
+    }
+
+  }
+
+
+  // =========================================================
+  // MICROPHONE PERMISSION
+  // =========================================================
+
+  async function requestMicrophonePermission() {
+
+    const button =
+      $("micPermissionBtn");
+
+    const status =
+      $("micPermissionStatus");
+
+
+    try {
+
+      if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+      ) {
+
+        throw new Error(
+          "Microphone API is unavailable. Please use Chrome/Edge over HTTPS."
+        );
+
+      }
+
+
+      const stream =
+        await navigator
+          .mediaDevices
+          .getUserMedia({
+            audio: true
+          });
+
+
+      microphoneGranted = true;
+
+
+      status.innerText =
+        "✅ Microphone permission granted.";
+
+      status.className =
+        "success";
+
+
+      button.innerText =
+        "Microphone Enabled";
+
+      button.disabled = true;
+
+
+      $("testMicBtn").disabled =
+        false;
+
+      $("recordBtn").disabled =
+        false;
+
+      $("toggleBtn").disabled =
+        false;
+
+
+      initializeSpeechRecognition();
+
+
+      // We only needed the stream to
+      // obtain permission.
+      stream
+        .getTracks()
+        .forEach(
+          track => track.stop()
+        );
+
+
+    } catch (error) {
+
+      microphoneGranted =
+        false;
+
+
+      console.error(
+        "Microphone error:",
+        error
+      );
+
+
+      let message =
+        "❌ Microphone access failed.";
+
+
+      if (
+        error.name ===
+        "NotAllowedError"
+      ) {
+
+        message =
+          "❌ Microphone permission was denied. Please click Allow in Chrome.";
+
+      }
+      else if (
+        error.name ===
+        "NotFoundError"
+      ) {
+
+        message =
+          "❌ No microphone was found on this device.";
+
+      }
+      else if (
+        error.name ===
+        "NotReadableError"
+      ) {
+
+        message =
+          "❌ Microphone is already being used by another application.";
+
+      }
+      else if (
+        error.name ===
+        "SecurityError"
+      ) {
+
+        message =
+          "❌ Browser security prevented microphone access. Make sure you are using the HTTPS Vercel URL.";
+
+      }
+      else {
+
+        message +=
+          " " +
+          error.message;
+
+      }
+
+
+      status.innerText =
+        message;
+
+      status.className =
+        "error";
+
+    }
+
+  }
+
+
+  // =========================================================
+  // MICROPHONE TEST
+  // =========================================================
+
+  async function testMicrophone() {
+
+    if (!microphoneGranted) {
+
+      alert(
+        "Please allow microphone access first."
+      );
+
+      return;
+
+    }
+
+
+    const status =
+      $("testStatus");
+
+    const audio =
+      $("audioPlayback");
+
+    const button =
+      $("testMicBtn");
+
+
+    button.disabled = true;
+
+    audio.style.display =
+      "none";
+
+
+    try {
+
+      const stream =
+        await navigator
+          .mediaDevices
+          .getUserMedia({
+            audio: true
+          });
+
+
+      const options =
+        getRecorderOptions();
+
+
+      const recorder =
+        options
+          ? new MediaRecorder(
+              stream,
+              options
+            )
+          : new MediaRecorder(
+              stream
+            );
+
+
+      const chunks = [];
+
+
+      recorder.ondataavailable =
+        function(event) {
+
+          if (
+            event.data &&
+            event.data.size > 0
+          ) {
+
+            chunks.push(
+              event.data
+            );
+
+          }
+
+        };
+
+
+      recorder.onstop =
+        function() {
+
+          const blob =
+            new Blob(
+              chunks,
+              {
+                type:
+                  recorder.mimeType ||
+                  "audio/webm"
+              }
+            );
+
+
+          audio.src =
+            URL.createObjectURL(
+              blob
+            );
+
+
+          audio.style.display =
+            "block";
+
+
+          status.innerText =
+            "✅ Test complete. Play your recording below.";
+
+          status.className =
+            "success";
+
+
+          stream
+            .getTracks()
+            .forEach(
+              track => track.stop()
+            );
+
+
+          button.disabled =
+            false;
+
+        };
+
+
+      recorder.start();
+
+
+      status.innerText =
+        "🔴 Recording for 3 seconds... Speak now!";
+
+      status.className =
+        "error";
+
+
+      setTimeout(
+        function() {
+
+          if (
+            recorder.state !==
+            "inactive"
+          ) {
+
+            recorder.stop();
+
+          }
+
+        },
+        3000
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+
+      status.innerText =
+        "❌ Test failed: " +
+        error.message;
+
+      status.className =
+        "error";
+
+
+      button.disabled =
+        false;
+
+    }
+
+  }
+
+
+  // =========================================================
+  // MEDIA RECORDER OPTIONS
+  // =========================================================
+
+  function getRecorderOptions() {
+
+    if (
+      typeof MediaRecorder ===
+      "undefined"
+    ) {
+
+      return null;
+
+    }
+
+
+    if (
+      MediaRecorder.isTypeSupported(
+        "audio/webm;codecs=opus"
+      )
+    ) {
+
+      return {
+        mimeType:
+          "audio/webm;codecs=opus"
+      };
+
+    }
+
+
+    if (
+      MediaRecorder.isTypeSupported(
+        "audio/webm"
+      )
+    ) {
+
+      return {
+        mimeType:
+          "audio/webm"
+      };
+
+    }
+
+
+    if (
+      MediaRecorder.isTypeSupported(
+        "audio/ogg;codecs=opus"
+      )
+    ) {
+
+      return {
+        mimeType:
+          "audio/ogg;codecs=opus"
+      };
+
+    }
+
+
+    return null;
+
+  }
+
+
+  // =========================================================
+  // START / STOP RECORDING
+  // =========================================================
+
+  async function toggleRecording() {
+
+    if (!microphoneGranted) {
+
+      alert(
+        "Please allow microphone access first."
+      );
+
+      return;
+
+    }
+
+
+    // Stop current recording
+    if (
+      mediaRecorder &&
+      mediaRecorder.state !==
+      "inactive"
+    ) {
+
+      mediaRecorder.stop();
+
+      return;
+
+    }
+
+
+    try {
+
+      currentRecordStream =
+        await navigator
+          .mediaDevices
+          .getUserMedia({
+            audio: true
+          });
+
+
+      const options =
+        getRecorderOptions();
+
+
+      mediaRecorder =
+        options
+          ? new MediaRecorder(
+              currentRecordStream,
+              options
+            )
+          : new MediaRecorder(
+              currentRecordStream
+            );
+
+
+      recordChunks = [];
+
+
+      mediaRecorder.ondataavailable =
+        function(event) {
+
+          if (
+            event.data &&
+            event.data.size > 0
+          ) {
+
+            recordChunks.push(
+              event.data
+            );
+
+          }
+
+        };
+
+
+      mediaRecorder.onstop =
+        async function() {
+
+          try {
+
+            currentRecordStream
+              .getTracks()
+              .forEach(
+                track => track.stop()
+              );
+
+
+            const mimeType =
+              mediaRecorder.mimeType ||
+              "audio/webm";
+
+
+            const blob =
+              new Blob(
+                recordChunks,
+                {
+                  type: mimeType
+                }
+              );
+
+
+            $("recordPlayback").src =
+              URL.createObjectURL(
+                blob
+              );
+
+
+            $("recordPlayback")
+              .style
+              .display =
+              "block";
+
+
+            $("recordStatus").innerText =
+              "Uploading recording...";
+
+
+            $("recordStatus").className =
+              "";
+
+
+            const dataUrl =
+              await blobToDataURL(
+                blob
+              );
+
+
+            const extension =
+              mimeType.includes("ogg")
+                ? "ogg"
+                : "webm";
+
+
+            const filename =
+              "call_" +
+              formatDateForFilename(
+                new Date()
+              ) +
+              "." +
+              extension;
+
+
+            sendToBridge({
+
+              type:
+                "SAVE_AUDIO",
+
+              dataUrl:
+                dataUrl,
+
+              filename:
+                filename,
+
+              folderName:
+                CONFIG.RECORD_FOLDER_NAME
+
+            });
+
+
+            $("recordBtn").innerText =
+              "Start Recording";
+
+
+            $("recordStatus").innerText =
+              "Recording ready. Uploading to Google Drive...";
+
+
+          } catch (error) {
+
+            console.error(
+              "Recording save error:",
+              error
+            );
+
+
+            $("recordStatus").innerText =
+              "❌ Could not upload recording.";
+
+            $("recordStatus").className =
+              "error";
+
+          }
+
+        };
+
+
+      mediaRecorder.start();
+
+
+      $("recordBtn").innerText =
+        "Stop Recording";
+
+
+      $("recordStatus").innerText =
+        "🔴 Recording...";
+
+
+      $("recordStatus").className =
+        "error";
+
+
+    } catch (error) {
+
+      console.error(
+        "Recording error:",
+        error
+      );
+
+
+      $("recordStatus").innerText =
+        "❌ Recording failed: " +
+        error.message;
+
+      $("recordStatus").className =
+        "error";
+
+    }
+
+  }
+
+
+  // =========================================================
+  // BLOB → DATA URL
+  // =========================================================
+
+  function blobToDataURL(blob) {
+
+    return new Promise(
+      function(resolve, reject) {
+
+        const reader =
+          new FileReader();
+
+
+        reader.onloadend =
+          function() {
+
+            resolve(
+              reader.result
+            );
+
+          };
+
+
+        reader.onerror =
+          reject;
+
+
+        reader.readAsDataURL(
+          blob
+        );
+
+      }
+    );
+
+  }
+
+
+  // =========================================================
+  // FILE NAME
+  // =========================================================
+
+  function formatDateForFilename(date) {
+
+    return (
+
+      date.getFullYear() +
+
+      "-" +
+
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0") +
+
+      "-" +
+
+      String(
+        date.getDate()
+      ).padStart(2, "0") +
+
+      "_" +
+
+      String(
+        date.getHours()
+      ).padStart(2, "0") +
+
+      "-" +
+
+      String(
+        date.getMinutes()
+      ).padStart(2, "0") +
+
+      "-" +
+
+      String(
+        date.getSeconds()
+      ).padStart(2, "0")
+
+    );
+
+  }
+
+
+  // =========================================================
+  // SPEECH RECOGNITION
+  // =========================================================
+
+  function initializeSpeechRecognition() {
+
+    if (
+      !("SpeechRecognition" in window) &&
+      !("webkitSpeechRecognition" in window)
+    ) {
+
+      $("speechSupport").innerText =
+        "⚠️ Browser speech recognition is not available. Audio recording still works.";
+
+      return;
+
+    }
+
+
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+
+    recognition =
+      new SpeechRecognition();
+
+
+    recognition.continuous =
+      true;
+
+
+    recognition.interimResults =
+      false;
+
+
+    recognition.lang =
+      "en-IN";
+
+
+    $("speechSupport").innerText =
+      "✅ Speech recognition enabled. Language: English (India).";
+
+
+    // ----------------------------------------------
+    // RESULT
+    // ----------------------------------------------
+
+    recognition.onresult =
+      function(event) {
+
+        const index =
+          event.results.length - 1;
+
+
+        const spokenText =
+          event
+            .results[index][0]
+            .transcript
+            .trim();
+
+
+        if (!spokenText) {
+          return;
+        }
+
+
+        $("transcript").innerText =
+          spokenText;
+
+
+        $("suggestion").innerText =
+          "Generating AI suggestion...";
+
+
+        sendToBridge({
+
+          type:
+            "GENERATE_ONE_LINER",
+
+          text:
+            spokenText
+
+        });
+
+      };
+
+
+    // ----------------------------------------------
+    // ERROR
+    // ----------------------------------------------
+
+    recognition.onerror =
+      function(event) {
+
+        console.error(
+          "Speech recognition error:",
+          event.error
+        );
+
+
+        if (
+          event.error ===
+          "not-allowed"
+        ) {
+
+          $("status").innerText =
+            "Microphone blocked";
+
+          $("status").className =
+            "status";
+
+        }
+
+
+        if (
+          event.error ===
+          "network"
+        ) {
+
+          $("speechSupport").innerText =
+            "⚠️ Speech recognition network error. Recording is still available.";
+
+        }
+
+      };
+
+
+    // ----------------------------------------------
+    // END
+    // ----------------------------------------------
+
+    recognition.onend =
+      function() {
+
+        if (
+          isListening &&
+          microphoneGranted
+        ) {
+
+          try {
+
+            recognition.start();
+
+          } catch (error) {
+
+            console.debug(
+              "Recognition restart:",
+              error
+            );
+
+          }
+
+        }
+
+      };
+
+  }
+
+
+  // =========================================================
+  // START / STOP LIVE COPILOT
+  // =========================================================
+
+  function toggleListening() {
+
+    if (!microphoneGranted) {
+
+      alert(
+        "Please allow microphone access first."
+      );
+
+      return;
+
+    }
+
+
+    if (!recognition) {
+
+      alert(
+        "Speech recognition is not available in this browser."
+      );
+
+      return;
+
+    }
+
+
+    const button =
+      $("toggleBtn");
+
+    const status =
+      $("status");
+
+
+    // ----------------------------------------------
+    // START
+    // ----------------------------------------------
+
+    if (!isListening) {
+
+      try {
+
+        recognition.start();
+
+        isListening =
+          true;
+
+
+        button.innerText =
+          "Stop Live Copilot";
+
+
+        button.className =
+          "btn-stop";
+
+
+        status.innerText =
+          "Listening...";
+
+
+        status.className =
+          "status active";
+
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    // ----------------------------------------------
+    // STOP
+    // ----------------------------------------------
+
+    isListening =
+      false;
+
+
+    try {
+
+      recognition.stop();
+
+    } catch (error) {
+
+      console.debug(
+        error
+      );
+
+    }
+
+
+    button.innerText =
+      "Start Live Copilot";
+
+
+    button.className =
+      "btn-start";
+
+
+    status.innerText =
+      "Offline";
+
+
+    status.className =
+      "status";
+
+  }
+
+
+  // =========================================================
+  // INITIALIZE
+  // =========================================================
+
+  window.addEventListener(
+    "load",
+    function() {
+
+      loadBridge();
+
+    }
+  );
+
+</script>
+
+</body>
+</html>

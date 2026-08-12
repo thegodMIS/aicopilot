@@ -14,7 +14,6 @@
 
   <title>Mentor Group — Live Call Assistant</title>
 
-
   <style>
 
     :root {
@@ -202,34 +201,6 @@
       opacity:.45;
 
       cursor:not-allowed;
-
-    }
-
-    .btn-mini {
-
-      border:1px solid var(--border);
-
-      background:rgba(255,255,255,.04);
-
-      color:var(--text);
-
-      border-radius:6px;
-
-      padding:5px 10px;
-
-      cursor:pointer;
-
-      font-size:10px;
-
-      font-weight:700;
-
-    }
-
-    .btn-mini:hover {
-
-      background:rgba(0,212,170,.12);
-
-      color:var(--aqua);
 
     }
 
@@ -528,66 +499,6 @@
 
       white-space:pre-wrap;
 
-      border-radius:0 6px 6px 0;
-
-    }
-
-    .line-customer {
-
-      border-left-color:rgba(0,212,170,.5) !important;
-
-      background:rgba(0,212,170,.05) !important;
-
-    }
-
-    .line-agent {
-
-      border-left-color:rgba(77,159,255,.4) !important;
-
-      background:rgba(77,159,255,.04) !important;
-
-    }
-
-    .line-label {
-
-      display:inline-block;
-
-      font-size:9px;
-
-      font-weight:900;
-
-      text-transform:uppercase;
-
-      letter-spacing:.5px;
-
-      margin-bottom:5px;
-
-      padding:2px 7px;
-
-      border-radius:10px;
-
-    }
-
-    .line-label-customer {
-
-      background:rgba(0,212,170,.15);
-
-      color:var(--aqua);
-
-    }
-
-    .line-label-agent {
-
-      background:rgba(77,159,255,.15);
-
-      color:var(--blue);
-
-    }
-
-    .line-interim {
-
-      opacity:.7;
-
     }
 
     .suggestions {
@@ -634,6 +545,121 @@
 
     }
 
+    .copilot-turn-bar {
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:10px;
+
+      padding:10px 12px;
+
+      margin:0 0 10px 0;
+
+      border:1px solid var(--border);
+
+      border-radius:10px;
+
+      background:rgba(255,255,255,.025);
+
+    }
+
+    .turn-state {
+
+      display:flex;
+
+      align-items:center;
+
+      gap:8px;
+
+      font-size:11px;
+
+      font-weight:800;
+
+      color:var(--muted);
+
+      letter-spacing:.2px;
+
+    }
+
+    .turn-dot {
+
+      width:8px;
+
+      height:8px;
+
+      border-radius:50%;
+
+      background:var(--gold);
+
+      box-shadow:0 0 0 3px rgba(245,197,24,.12);
+
+    }
+
+    .turn-dot.customer {
+      background:var(--aqua);
+      box-shadow:0 0 0 3px rgba(0,212,170,.12);
+    }
+
+    .turn-dot.agent {
+      background:var(--blue);
+      box-shadow:0 0 0 3px rgba(77,159,255,.12);
+    }
+
+    .turn-dot.ai {
+      background:var(--orange);
+      box-shadow:0 0 0 3px rgba(255,159,67,.12);
+    }
+
+    .turn-buttons {
+
+      display:flex;
+
+      gap:6px;
+
+    }
+
+    .turn-btn {
+
+      border:1px solid var(--border);
+
+      background:rgba(255,255,255,.035);
+
+      color:var(--text);
+
+      border-radius:7px;
+
+      padding:7px 9px;
+
+      cursor:pointer;
+
+      font-size:10px;
+
+      font-weight:800;
+
+    }
+
+    .turn-btn.active {
+
+      background:rgba(0,212,170,.12);
+
+      color:var(--aqua);
+
+      border-color:rgba(0,212,170,.28);
+
+    }
+
+    .suggestion.current {
+
+      border-color:rgba(0,212,170,.22);
+
+      box-shadow:0 0 0 1px rgba(0,212,170,.06) inset;
+
+    }
+
     .suggestion-text {
 
       font-size:13px;
@@ -668,124 +694,6 @@
       white-space:pre-wrap;
 
       line-height:1.55;
-
-    }
-
-    .head-right {
-
-      display:flex;
-
-      align-items:center;
-
-      gap:12px;
-
-    }
-
-    .speaker-indicator {
-
-      display:inline-flex;
-
-      align-items:center;
-
-      gap:6px;
-
-      padding:4px 10px;
-
-      border-radius:20px;
-
-      background:rgba(255,255,255,.05);
-
-      font-size:10px;
-
-      font-weight:700;
-
-      text-transform:uppercase;
-
-      letter-spacing:.5px;
-
-      transition:all .25s ease;
-
-    }
-
-    .speaker-dot {
-
-      width:7px;
-
-      height:7px;
-
-      border-radius:50%;
-
-      background:#6c7a91;
-
-      flex-shrink:0;
-
-    }
-
-    .speaker-indicator.speaking {
-
-      background:rgba(0,212,170,.15);
-
-      color:var(--aqua);
-
-    }
-
-    .speaker-indicator.speaking .speaker-dot {
-
-      background:var(--aqua);
-
-      animation:pulse 1s infinite;
-
-    }
-
-    .speaker-indicator.customer-turn {
-
-      background:rgba(0,212,170,.12);
-
-      color:var(--aqua);
-
-    }
-
-    .speaker-indicator.customer-turn .speaker-dot {
-
-      background:var(--aqua);
-
-    }
-
-    .speaker-indicator.agent-turn {
-
-      background:rgba(77,159,255,.12);
-
-      color:var(--blue);
-
-    }
-
-    .speaker-indicator.agent-turn .speaker-dot {
-
-      background:var(--blue);
-
-    }
-
-    .speaker-indicator.thinking {
-
-      background:rgba(245,197,24,.15);
-
-      color:var(--gold);
-
-    }
-
-    .speaker-indicator.thinking .speaker-dot {
-
-      background:var(--gold);
-
-      animation:pulse 1s infinite;
-
-    }
-
-    .speaker-indicator.idle {
-
-      background:rgba(255,255,255,.04);
-
-      color:var(--muted);
 
     }
 
@@ -1083,28 +991,11 @@
           🎙 Live Transcript
         </div>
 
-        <div class="head-right">
-
-          <span
-            id="speakerIndicator"
-            class="speaker-indicator idle"
-          >
-
-            <span class="speaker-dot"></span>
-
-            <span id="speakerText">
-              Idle
-            </span>
-
-          </span>
-
-          <span
-            id="wordCount"
-            style="font-size:10px;color:var(--muted)"
-          >
-            0 words
-          </span>
-
+        <div
+          id="wordCount"
+          style="font-size:10px;color:var(--muted)"
+        >
+          0 words
         </div>
 
       </div>
@@ -1130,29 +1021,52 @@
           🧠 AI Coaching
         </div>
 
-        <div class="head-right">
+        <div
+          id="aiStatus"
+          style="font-size:10px;color:var(--muted)"
+        >
+          Waiting
+        </div>
+
+      </div>
+
+
+      <div class="copilot-turn-bar">
+
+        <div class="turn-state">
 
           <span
-            id="aiStatus"
-            style="font-size:10px;color:var(--muted)"
-          >
-            Waiting
+            id="turnDot"
+            class="turn-dot customer"
+          ></span>
+
+          <span id="turnStateText">
+            CUSTOMER SPEAKING
           </span>
 
+        </div>
+
+        <div class="turn-buttons">
+
           <button
-            class="btn-mini"
-            id="forceBtn"
-            onclick="forceAISuggestion()"
-            style="display:none"
-            title="Force an AI suggestion using the last utterance"
+            id="customerTurnBtn"
+            class="turn-btn active"
+            onclick="setSpeakerMode('customer')"
           >
-            ⚡ Force
+            🎧 Customer
+          </button>
+
+          <button
+            id="agentTurnBtn"
+            class="turn-btn"
+            onclick="setSpeakerMode('agent')"
+          >
+            🗣️ Me
           </button>
 
         </div>
 
       </div>
-
 
       <div
         class="suggestions"
@@ -1181,22 +1095,12 @@
 // SERVER URL
 // ============================================================
 
-const APPS_SCRIPT_URL =
-  'https://script.google.com/a/macros/mentorwater.com/s/AKfycbzRD9UQ8eB9bbz3z0FsIG_qgoMn0sVDoSYGgJJY1DVhHXP547D9URRoMB2alrkHBC5pvQ/exec';
-
+// Vercel frontend: Apps Script is reached through /api/copilot.
 const DASHBOARD_URL =
-  APPS_SCRIPT_URL + '?page=dashboard';
+  "PASTE_YOUR_APPS_SCRIPT_DASHBOARD_URL_HERE";
 
-
-// ============================================================
-// TUNABLE CONSTANTS (based on research recommendations)
-// ============================================================
-
-const SILENCE_DELAY_MS        = 600;   // wait after last speech to confirm turn end
-const MAX_TURN_DURATION_MS    = 10000; // force suggestion if turn exceeds 10s
-const MIN_UTTERANCE_CHARS     = 2;     // skip very short utterances
-const LOW_CONFIDENCE_THRESHOLD = 0.45; // ignore low-confidence finals
-const MAX_SUGGESTIONS_DEFAULT = 30;    // safety cap per call
+const API_ENDPOINT =
+  "/api/copilot";
 
 
 // ============================================================
@@ -1217,26 +1121,36 @@ let finalTranscript = '';
 
 let interimTranscript = '';
 
-let conversationLog = []; // [{ speaker, text, time, confidence }]
-
 let suggestions = [];
 
 let initialData = null;
 
+let maxSuggestions = 25;
+
 let suggestionCount = 0;
 
-let maxSuggestions = MAX_SUGGESTIONS_DEFAULT;
+let suggestionSeconds = 10;
 
+// ---------------- V1 LIVE-CALL STATE ----------------
+// In V1 we use an alternating speaker model:
+// Customer -> AI -> Salesperson -> Customer -> AI ...
+// The manual buttons are a safe override when the turn changes unexpectedly.
+let speakerMode = 'customer';
 
-// ---- turn detection state ----
+let turnBuffer = '';
 
-let isCustomerTurn      = true;
-let silenceTimer        = null;
-let turnMaxTimer        = null;
-let lastUtterance       = '';
-let lastUtteranceStart  = null;
-let awaitingResponse    = false;
-let turnNumber          = 0;
+let turnTimer = null;
+
+let aiProcessing = false;
+
+let lastCustomerTurn = '';
+
+const TURN_END_SILENCE_MS = 900;
+
+const MIN_CUSTOMER_TURN_CHARS = 3;
+
+const MAX_PREVIOUS_SUGGESTIONS = 3;
+
 
 
 // ============================================================
@@ -1256,12 +1170,22 @@ window.addEventListener(
 
 
 // ============================================================
-// NAVIGATION
+// DASHBOARD
 // ============================================================
 
 function goDashboard() {
 
-  window.location.href = DASHBOARD_URL;
+  if (!DASHBOARD_URL || DASHBOARD_URL.indexOf('PASTE_') === 0) {
+
+    showError(
+      'Dashboard URL is not configured.'
+    );
+
+    return;
+
+  }
+
+  window.location.href = DASHBOARD_URL + '?page=dashboard';
 
 }
 
@@ -1270,15 +1194,38 @@ function goDashboard() {
 // ESCAPE
 // ============================================================
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
-  return String(value || '')
+  return String(
+    value || ''
+  )
 
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  .replace(
+    /&/g,
+    '&amp;'
+  )
+
+  .replace(
+    /</g,
+    '&lt;'
+  )
+
+  .replace(
+    />/g,
+    '&gt;'
+  )
+
+  .replace(
+    /"/g,
+    '&quot;'
+  )
+
+  .replace(
+    /'/g,
+    '&#039;'
+  );
 
 }
 
@@ -1287,19 +1234,32 @@ function escapeHtml(value) {
 // ERROR
 // ============================================================
 
-function showError(message) {
+function showError(
+  message
+) {
 
-  const box = document.getElementById('errorBox');
+  const box =
+    document.getElementById(
+      'errorBox'
+    );
 
-  box.style.display = 'block';
 
-  box.textContent = message;
+  box.style.display =
+    'block';
+
+
+  box.textContent =
+    message;
 
 }
 
+
 function clearError() {
 
-  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById(
+    'errorBox'
+  ).style.display =
+    'none';
 
 }
 
@@ -1310,113 +1270,208 @@ function clearError() {
 
 async function runMicrophoneDiagnostics() {
 
-  const secure = window.isSecureContext === true;
 
-  setDiagnostic('secureStatus', secure ? 'YES' : 'NO', secure ? 'good' : 'bad');
+  // Secure context
 
+  const secure =
+    window.isSecureContext === true;
 
-  const mediaAvailable =
-    !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 
   setDiagnostic(
-    'mediaStatus',
-    mediaAvailable ? 'AVAILABLE' : 'BLOCKED / MISSING',
-    mediaAvailable ? 'good' : 'bad'
+    'secureStatus',
+    secure
+      ? 'YES'
+      : 'NO',
+    secure
+      ? 'good'
+      : 'bad'
   );
 
 
-  const context = window.top === window.self ? 'TOP LEVEL' : 'IFRAME';
+  // Media API
+
+  const mediaAvailable =
+    !!(
+      navigator.mediaDevices &&
+      navigator.mediaDevices.getUserMedia
+    );
+
+
+  setDiagnostic(
+    'mediaStatus',
+    mediaAvailable
+      ? 'AVAILABLE'
+      : 'BLOCKED / MISSING',
+    mediaAvailable
+      ? 'good'
+      : 'bad'
+  );
+
+
+  // Context
+
+  const context =
+    window.top === window.self
+      ? 'TOP LEVEL'
+      : 'IFRAME';
+
 
   setDiagnostic(
     'contextStatus',
     context,
-    context === 'TOP LEVEL' ? 'good' : 'warn'
+    context === 'TOP LEVEL'
+      ? 'good'
+      : 'warn'
   );
 
 
-  if (navigator.permissions && navigator.permissions.query) {
+  // Permissions API
+
+  if (
+    navigator.permissions &&
+    navigator.permissions.query
+  ) {
 
     try {
 
       const permission =
-        await navigator.permissions.query({ name: 'microphone' });
+        await navigator.permissions.query({
+          name:'microphone'
+        });
+
 
       setDiagnostic(
         'permissionStatus',
         permission.state.toUpperCase(),
-        permission.state === 'granted' ? 'good'
-          : permission.state === 'prompt' ? 'warn' : 'bad'
+        permission.state === 'granted'
+          ? 'good'
+          : permission.state === 'prompt'
+            ? 'warn'
+            : 'bad'
       );
 
-      permission.onchange = function() {
 
-        setDiagnostic(
-          'permissionStatus',
-          permission.state.toUpperCase(),
-          permission.state === 'granted' ? 'good' : 'bad'
-        );
+      permission.onchange =
+        function() {
 
-      };
+          setDiagnostic(
+            'permissionStatus',
+            permission.state.toUpperCase(),
+            permission.state === 'granted'
+              ? 'good'
+              : 'bad'
+          );
+
+        };
 
     } catch (err) {
 
-      setDiagnostic('permissionStatus', 'UNAVAILABLE', 'warn');
+      setDiagnostic(
+        'permissionStatus',
+        'UNAVAILABLE',
+        'warn'
+      );
 
     }
 
   } else {
 
-    setDiagnostic('permissionStatus', 'API UNAVAILABLE', 'warn');
+    setDiagnostic(
+      'permissionStatus',
+      'API UNAVAILABLE',
+      'warn'
+    );
 
   }
 
 
+  // Speech recognition
+
   const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
 
   if (SpeechRecognition) {
 
-    recognitionSupported = true;
+    recognitionSupported =
+      true;
 
-    setDiagnostic('speechStatus', 'AVAILABLE', 'good');
+
+    setDiagnostic(
+      'speechStatus',
+      'AVAILABLE',
+      'good'
+    );
 
   } else {
 
-    recognitionSupported = false;
+    recognitionSupported =
+      false;
 
-    setDiagnostic('speechStatus', 'NOT SUPPORTED', 'bad');
+
+    setDiagnostic(
+      'speechStatus',
+      'NOT SUPPORTED',
+      'bad'
+    );
 
   }
 
 }
 
 
-function setDiagnostic(id, value, className) {
+// ============================================================
+// DIAGNOSTIC UI
+// ============================================================
 
-  const element = document.getElementById(id);
+function setDiagnostic(
+  id,
+  value,
+  className
+) {
 
-  if (!element) return;
+  const element =
+    document.getElementById(
+      id
+    );
 
-  element.textContent = value;
 
-  element.className = className;
+  if (!element) {
+    return;
+  }
+
+
+  element.textContent =
+    value;
+
+
+  element.className =
+    className;
 
 }
 
+
+// ============================================================
+// EXPLICIT MICROPHONE TEST
+// ============================================================
 
 async function testMicrophone() {
 
   clearError();
 
 
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
 
     showError(
       'MICROPHONE API BLOCKED\n\n' +
 
-      'The browser does not expose getUserMedia() to this page.\n\n' +
+      'The browser does not expose getUserMedia() to this Apps Script page.\n\n' +
 
-      'Make sure you opened the page over HTTPS on Vercel.'
+      'This is a Permissions Policy / Apps Script iframe restriction, not a Chrome microphone permission problem.'
     );
 
     return false;
@@ -1427,35 +1482,81 @@ async function testMicrophone() {
   try {
 
     const stream =
-      await navigator.mediaDevices.getUserMedia({ audio: true });
+      await navigator.mediaDevices.getUserMedia({
+        audio:true
+      });
 
-    stream.getTracks().forEach(function(track) { track.stop(); });
 
-    setDiagnostic('mediaStatus', 'WORKING', 'good');
+    stream
+      .getTracks()
+      .forEach(
+        function(track) {
+          track.stop();
+        }
+      );
 
-    setDiagnostic('permissionStatus', 'GRANTED', 'good');
+
+    setDiagnostic(
+      'mediaStatus',
+      'WORKING',
+      'good'
+    );
+
+
+    setDiagnostic(
+      'permissionStatus',
+      'GRANTED',
+      'good'
+    );
+
 
     return true;
 
+
   } catch (error) {
 
-    console.error('getUserMedia error', error);
+    console.error(
+      'getUserMedia error',
+      error
+    );
 
-    const name = error && error.name ? error.name : 'UnknownError';
 
-    if (name === 'NotAllowedError') {
+    const name =
+      error &&
+      error.name
+        ? error.name
+        : 'UnknownError';
+
+
+    if (
+      name ===
+      'NotAllowedError'
+    ) {
 
       showError(
-        'MICROPHONE ACCESS DENIED.\n\n' +
+        'MICROPHONE ACCESS IS BLOCKED BY THE PAGE POLICY.\n\n' +
 
-        'Please allow microphone access in your browser address bar.'
+        'Chrome may show the microphone as Allowed, but Google Apps Script HTML Service is running this page inside a sandboxed iframe.\n\n' +
+
+        'This is NOT a normal microphone permission problem.\n\n' +
+
+        'The reliable fix is to move the microphone frontend outside Apps Script.'
       );
 
     } else {
 
-      showError('Microphone error: ' + name + '\n\n' + (error.message || ''));
+      showError(
+        'Microphone error: ' +
+        name +
+        '\n\n' +
+        (
+          error.message ||
+          ''
+        )
+      );
 
     }
+
 
     return false;
 
@@ -1472,62 +1573,118 @@ async function loadInitialData() {
 
   try {
 
-    const response = await fetch(
-      '/api/copilot',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'getInitialData' })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data || data.success !== true) {
-      throw new Error(
-        data && data.error ? data.error : 'Could not load application data.'
+    const response =
+      await fetch(
+        API_ENDPOINT,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'getInitialData'
+          })
+        }
       );
+
+    const data =
+      await response.json();
+
+    if (!response.ok || !data || data.success !== true) {
+
+      throw new Error(
+        data && data.error
+          ? data.error
+          : 'Could not load application data.'
+      );
+
     }
 
     initialData = data;
-    maxSuggestions = Number(data.maxSuggestions) || MAX_SUGGESTIONS_DEFAULT;
+
+    maxSuggestions =
+      Number(data.maxSuggestions) || 25;
+
+    suggestionSeconds =
+      Number(data.suggestInterval) || 10;
 
     populateAgents(data.agents || []);
 
     setupSpeechRecognition();
 
-    document.getElementById('loadStatus').textContent = 'Ready';
+    document.getElementById('loadStatus').textContent =
+      'Ready';
 
   } catch (error) {
 
-    showError('Server error:\n\n' + (error.message || error));
+    showError(
+      'Server error:
+
+' +
+      (error.message || error)
+    );
 
   }
 
 }
 
 
-function populateAgents(agents) {
+// ============================================================
+// AGENTS
+// ============================================================
 
-  const select = document.getElementById('agent');
+function populateAgents(
+  agents
+) {
 
-  select.innerHTML = '<option value="">Select agent</option>';
+  const select =
+    document.getElementById(
+      'agent'
+    );
 
-  agents.forEach(function(agent) {
 
-    const option = document.createElement('option');
+  select.innerHTML =
+    '<option value="">Select agent</option>';
 
-    option.value = agent['Agent ID'] || '';
 
-    option.textContent =
-      (agent['Name'] || 'Unknown') +
-      (agent['Role'] ? ' — ' + agent['Role'] : '');
+  agents.forEach(
+    function(agent) {
 
-    option.dataset.name = agent['Name'] || '';
+      const option =
+        document.createElement(
+          'option'
+        );
 
-    select.appendChild(option);
 
-  });
+      option.value =
+        agent['Agent ID'] ||
+        '';
+
+
+      option.textContent =
+        (
+          agent['Name'] ||
+          'Unknown'
+        ) +
+        (
+          agent['Role']
+            ? ' — ' +
+              agent['Role']
+            : ''
+        );
+
+
+      option.dataset.name =
+        agent['Name'] ||
+        '';
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
 
 }
 
@@ -1539,613 +1696,347 @@ function populateAgents(agents) {
 function setupSpeechRecognition() {
 
   const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
 
   if (!SpeechRecognition) {
 
     recognitionSupported = false;
 
+    setDiagnostic(
+      'speechStatus',
+      'NOT SUPPORTED',
+      'bad'
+    );
+
     return;
 
   }
 
+
   recognitionSupported = true;
 
-  recognition = new SpeechRecognition();
+
+  recognition =
+    new SpeechRecognition();
+
 
   recognition.continuous = true;
 
   recognition.interimResults = true;
 
   recognition.lang =
-    (initialData && initialData.speechLang) || 'en-IN';
+    (
+      initialData &&
+      initialData.speechLang
+    ) ||
+    'en-IN';
 
 
-  recognition.onstart = function() {
+  recognition.onstart =
+    function() {
 
-    setDiagnostic('speechStatus', 'RUNNING', 'good');
+      setDiagnostic(
+        'speechStatus',
+        'RUNNING',
+        'good'
+      );
 
-    if (!isSpeaking && isCalling) {
-      updateSpeakerIndicator(isCustomerTurn ? 'customer' : 'agent');
-    }
-
-  };
-
-
-  recognition.onresult = function(event) {
-
-    let interim = '';
-
-    let finals = '';
-
-    let lastConfidence = 1.0;
+    };
 
 
-    for (
-      let i = event.resultIndex;
-      i < event.results.length;
-      i++
-    ) {
+  recognition.onresult =
+    function(event) {
 
-      const result = event.results[i];
+      let interim = '';
 
-      const text = result[0].transcript;
-
-      lastConfidence = result[0].confidence || 1.0;
-
-      if (result.isFinal) {
-
-        finals += text + ' ';
-
-      } else {
-
-        interim += text;
-
-      }
-
-    }
+      let finalText = '';
 
 
-    if (finals) {
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
 
-      handleFinalTranscript(finals.trim(), lastConfidence);
+        const result =
+          event.results[i];
 
-      // interim for this segment is now part of a final line
-      interim = '';
-
-    }
-
-
-    interimTranscript = interim;
-
-    renderTranscript();
-
-  };
+        const text =
+          result[0].transcript;
 
 
-  recognition.onerror = function(event) {
+        if (result.isFinal) {
 
-    console.error('SpeechRecognition error:', event);
+          finalText +=
+            text + ' ';
 
-    const error = event.error || 'unknown';
+        } else {
 
-    setDiagnostic('speechStatus', error.toUpperCase(), 'bad');
+          interim += text;
 
-    switch (error) {
-
-      case 'not-allowed':
-        showError(
-          'SPEECH INPUT WAS BLOCKED.\n\n' +
-
-          'The microphone permission may still be granted.\n\n' +
-
-          'Speech recognition can also be blocked by a sandboxed page.\n\n' +
-
-          'Make sure the page is served from a top-level HTTPS context on Vercel.'
-        );
-        break;
-
-      case 'service-not-allowed':
-        showError('SPEECH RECOGNITION SERVICE WAS BLOCKED.');
-        break;
-
-      case 'network':
-        showError(
-          'SPEECH RECOGNITION NETWORK ERROR.\n\n' +
-
-          'Chrome could not reach the speech recognition service.'
-        );
-        break;
-
-      case 'no-speech':
-        // benign
-        break;
-
-      case 'audio-capture':
-        showError(
-          'NO AUDIO INPUT WAS AVAILABLE.\n\n' +
-
-          'Check that your microphone is connected.'
-        );
-        break;
-
-      default:
-        showError('Speech recognition error: ' + error);
-
-    }
-
-  };
-
-
-  recognition.onend = function() {
-
-    if (isCalling) {
-
-      setTimeout(function() {
-
-        if (!isCalling) return;
-
-        try { recognition.start(); }
-        catch (error) {
-          console.warn('Could not restart speech recognition:', error);
         }
 
-      }, 500);
+      }
 
-    }
 
-  };
+      if (finalText.trim()) {
 
-}
+        // Keep a complete call transcript for logging.
+        const speakerLabel =
+          speakerMode === 'customer'
+            ? 'Customer: '
+            : 'Salesperson: ';
 
+        finalTranscript +=
+          speakerLabel +
+          finalText.trim() +
+          '\n';
 
-// ============================================================
-// TURN DETECTION (CORE LOGIC)
-// ============================================================
 
-function handleFinalTranscript(text, confidence) {
+        // Only the current turn is sent to live AI.
+        turnBuffer +=
+          ' ' +
+          finalText.trim();
 
-  if (!text || text.length < MIN_UTTERANCE_CHARS) return;
+        clearTimeout(turnTimer);
 
-  if (
-    confidence &&
-    confidence > 0 &&
-    confidence < LOW_CONFIDENCE_THRESHOLD
-  ) {
-    // likely noise — skip but log
-    console.warn('Low confidence final ignored:', confidence, text);
-    return;
-  }
-
-
-  // accumulate
-  finalTranscript += text + ' ';
-
-  lastUtterance       = text;
-  lastUtteranceStart  = Date.now();
-
-
-  // append to conversation log
-  conversationLog.push({
-
-    speaker:    isCustomerTurn ? 'customer' : 'agent',
-    text:       text,
-    time:       Date.now(),
-    confidence: confidence
-
-  });
-
-
-  // visual feedback
-  updateSpeakerIndicator('speaking');
-
-
-  // clear previous timers
-  clearTimeout(silenceTimer);
-  clearTimeout(turnMaxTimer);
-
-
-  // max-duration safety: if a turn drags on, force a suggestion
-  turnMaxTimer = setTimeout(function() {
-
-    if (isCalling) handleTurnEnd('max_duration');
-
-  }, MAX_TURN_DURATION_MS);
-
-
-  // silence-based end-of-turn
-  silenceTimer = setTimeout(function() {
-
-    if (isCalling) handleTurnEnd('silence');
-
-  }, SILENCE_DELAY_MS);
-
-}
-
-
-function handleTurnEnd(reason) {
-
-  clearTimeout(silenceTimer);
-  clearTimeout(turnMaxTimer);
-
-  silenceTimer = null;
-  turnMaxTimer = null;
-
-
-  if (!isCalling) return;
-
-  const utterance = lastUtterance;
-
-  lastUtterance = '';
-
-
-  // send AI request only on customer turn, only if not already waiting,
-  // and only if below the suggestion cap
-  if (
-    utterance &&
-    isCustomerTurn &&
-    !awaitingResponse &&
-    suggestionCount < maxSuggestions
-  ) {
-
-    sendForSuggestion(
-      utterance,
-      conversationLog[conversationLog.length - 1]
-    );
-
-  }
-
-
-  // toggle speaker state
-  isCustomerTurn = !isCustomerTurn;
-
-  turnNumber++;
-
-
-  // update visual
-  updateSpeakerIndicator(isCustomerTurn ? 'customer' : 'agent');
-
-  renderTranscript();
-
-}
-
-
-// ============================================================
-// AI REQUEST
-// ============================================================
-
-function sendForSuggestion(text, logEntry) {
-
-  awaitingResponse = true;
-
-  updateSpeakerIndicator('thinking');
-
-
-  const agent = document.getElementById('agent');
-
-  const selected = agent.options[agent.selectedIndex];
-
-
-  const params = {
-
-    agentId:      agent.value,
-    agentName:    selected && selected.dataset ? selected.dataset.name : '',
-
-    clientName:    document.getElementById('clientName').value,
-    clientCompany: document.getElementById('clientCompany').value,
-    clientPhone:   document.getElementById('clientPhone').value,
-
-    callType: 'Sales Call',
-
-    duration: callStartedAt
-      ? Math.floor((Date.now() - callStartedAt) / 1000)
-      : 0,
-
-    // PRIMARY: just the latest utterance
-    transcript: text,
-
-    // CONTEXT: last ~2000 chars of running transcript
-    fullContext: finalTranscript.slice(-2000),
-
-    // RECENT SUGGESTIONS (cap 5)
-    previousSuggestions: suggestions.slice(0, 5).join('\n'),
-
-    // SPEAKER LABEL
-    speaker: logEntry
-      ? logEntry.speaker
-      : (isCustomerTurn ? 'customer' : 'agent'),
-
-    // TURN META
-    turnNumber: turnNumber,
-
-    // STRUCTURED HISTORY (last 10 turns)
-    conversationLog: conversationLog.slice(-10)
-
-  };
-
-
-  document.getElementById('aiStatus').textContent = 'Thinking...';
-
-
-  fetch('/api/copilot', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action: 'getLiveSuggestion',
-      params:  params
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(result) {
-
-    awaitingResponse = false;
-
-    if (!result || !result.success) {
-
-      document.getElementById('aiStatus').textContent = 'AI error';
-
-      console.error('AI error:', result);
-
-      updateSpeakerIndicator(isCustomerTurn ? 'customer' : 'agent');
-
-      return;
-
-    }
-
-
-    suggestionCount++;
-
-    const suggestion = result.suggestion || {};
-
-
-    if (suggestion.immediate_suggestion) {
-
-      suggestions.unshift(suggestion.immediate_suggestion);
-
-      renderSuggestion(suggestion);
-
-    }
-
-
-    document.getElementById('aiStatus').textContent = 'Live ✓';
-
-    updateSpeakerIndicator(isCustomerTurn ? 'customer' : 'agent');
-
-  })
-  .catch(function(error) {
-
-    awaitingResponse = false;
-
-    document.getElementById('aiStatus').textContent = 'AI error';
-
-    console.error('AI error:', error);
-
-    updateSpeakerIndicator(isCustomerTurn ? 'customer' : 'agent');
-
-  });
-
-}
-
-
-function forceAISuggestion() {
-
-  if (!isCalling) {
-    showError('No active call.');
-    return;
-  }
-
-  if (awaitingResponse) return;
-
-
-  let text = lastUtterance;
-
-  let logEntry = null;
-
-  if (!text && conversationLog.length > 0) {
-
-    // find most recent customer turn
-    for (let i = conversationLog.length - 1; i >= 0; i--) {
-
-      if (conversationLog[i].speaker === 'customer') {
-
-        text = conversationLog[i].text;
-        logEntry = conversationLog[i];
-        break;
+        turnTimer =
+          setTimeout(
+            finishSpeechTurn,
+            TURN_END_SILENCE_MS
+          );
 
       }
 
+
+      interimTranscript =
+        interim;
+
+      renderTranscript();
+
+    };
+
+
+  recognition.onerror =
+    function(event) {
+
+      console.error(
+        'SpeechRecognition error:',
+        event
+      );
+
+      const error =
+        event.error ||
+        'unknown';
+
+      setDiagnostic(
+        'speechStatus',
+        error.toUpperCase(),
+        'bad'
+      );
+
+      if (error === 'no-speech') {
+        return;
+      }
+
+      if (error === 'network') {
+        showError(
+          'Speech recognition network error. The microphone is still available.'
+        );
+        return;
+      }
+
+      if (error === 'audio-capture') {
+        showError(
+          'No audio input was available. Check your microphone.'
+        );
+        return;
+      }
+
+      if (error === 'not-allowed' || error === 'service-not-allowed') {
+        showError(
+          'Speech recognition was blocked by the browser. Confirm microphone permission and use Chrome/Edge.'
+        );
+        return;
+      }
+
+      showError(
+        'Speech recognition error: ' + error
+      );
+
+    };
+
+
+  recognition.onend =
+    function() {
+
+      if (!isCalling) {
+        return;
+      }
+
+      setTimeout(
+        function() {
+
+          if (!isCalling) {
+            return;
+          }
+
+          try {
+            recognition.start();
+          } catch (error) {
+            console.debug(
+              'Could not restart recognition:',
+              error
+            );
+          }
+
+        },
+        300
+      );
+
+    };
+
+}
+
+
+// ============================================================
+// TURN MANAGEMENT
+// ============================================================
+
+function setSpeakerMode(mode) {
+
+  if (mode !== 'customer' && mode !== 'agent') {
+    return;
+  }
+
+  speakerMode = mode;
+
+  turnBuffer = '';
+
+  clearTimeout(turnTimer);
+
+  updateSpeakerUI();
+
+}
+
+
+function updateSpeakerUI(stateOverride) {
+
+  const dot =
+    document.getElementById('turnDot');
+
+  const label =
+    document.getElementById('turnStateText');
+
+  const customerBtn =
+    document.getElementById('customerTurnBtn');
+
+  const agentBtn =
+    document.getElementById('agentTurnBtn');
+
+  const state =
+    stateOverride ||
+    (
+      speakerMode === 'customer'
+        ? 'CUSTOMER SPEAKING'
+        : 'YOU ARE SPEAKING'
+    );
+
+  if (dot) {
+    dot.className =
+      'turn-dot ' +
+      (
+        stateOverride
+          ? 'ai'
+          : speakerMode
+      );
+  }
+
+  if (label) {
+    label.textContent = state;
+  }
+
+  if (customerBtn) {
+    customerBtn.classList.toggle(
+      'active',
+      !stateOverride &&
+      speakerMode === 'customer'
+    );
+  }
+
+  if (agentBtn) {
+    agentBtn.classList.toggle(
+      'active',
+      !stateOverride &&
+      speakerMode === 'agent'
+    );
+  }
+
+}
+
+
+function finishSpeechTurn() {
+
+  const text =
+    turnBuffer
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  turnBuffer = '';
+
+  if (!isCalling || !text) {
+    return;
+  }
+
+
+  // ----------------------------------------------------------
+  // CUSTOMER TURN
+  // ----------------------------------------------------------
+
+  if (speakerMode === 'customer') {
+
+    if (aiProcessing) {
+      return;
     }
 
-    if (!text) {
-      text = conversationLog[conversationLog.length - 1].text;
-      logEntry = conversationLog[conversationLog.length - 1];
+    if (text === lastCustomerTurn) {
+      return;
     }
 
-  }
+    if (
+      text.length <
+      MIN_CUSTOMER_TURN_CHARS
+    ) {
+      return;
+    }
 
-  if (!text) {
+    lastCustomerTurn = text;
 
-    showError('No speech detected yet.');
-
-    return;
-
-  }
-
-  sendForSuggestion(text, logEntry);
-
-}
-
-
-// ============================================================
-// UI HELPERS
-// ============================================================
-
-function updateSpeakerIndicator(state) {
-
-  const indicator = document.getElementById('speakerIndicator');
-  const text      = document.getElementById('speakerText');
-
-  if (!indicator || !text) return;
-
-
-  indicator.className = 'speaker-indicator';
-
-
-  switch (state) {
-
-    case 'listening':
-      indicator.classList.add('idle');
-      text.textContent = 'Listening';
-      break;
-
-    case 'speaking':
-      indicator.classList.add('speaking');
-      text.textContent = isCustomerTurn
-        ? 'Customer speaking'
-        : 'Agent speaking';
-      break;
-
-    case 'customer':
-      indicator.classList.add('customer-turn');
-      text.textContent = 'Customer turn';
-      break;
-
-    case 'agent':
-      indicator.classList.add('agent-turn');
-      text.textContent = 'Your turn';
-      break;
-
-    case 'thinking':
-      indicator.classList.add('thinking');
-      text.textContent = 'AI thinking';
-      break;
-
-    case 'idle':
-    default:
-      indicator.classList.add('idle');
-      text.textContent = 'Idle';
-      break;
-
-  }
-
-}
-
-
-function renderTranscript() {
-
-  const box = document.getElementById('transcript');
-
-
-  if (conversationLog.length === 0 && !interimTranscript) {
-
-    box.innerHTML =
-      '<div class="empty">' +
-      (isCalling ? 'Listening...' : 'Click Start Call and speak.') +
-      '</div>';
-
-    document.getElementById('wordCount').textContent = '0 words';
+    requestSuggestionForCustomerTurn(text);
 
     return;
-
   }
 
 
-  let html = '';
+  // ----------------------------------------------------------
+  // SALESPERSON TURN
+  // ----------------------------------------------------------
+  // Do not call AI. After the salesperson finishes,
+  // automatically switch back to customer mode.
 
+  setSpeakerMode('customer');
 
-  conversationLog.forEach(function(entry) {
-
-    const labelClass = entry.speaker === 'customer'
-      ? 'line-label-customer'
-      : 'line-label-agent';
-
-    const lineClass = entry.speaker === 'customer'
-      ? 'line-customer'
-      : 'line-agent';
-
-    const speakerLabel = entry.speaker === 'customer'
-      ? 'Customer'
-      : 'Agent';
-
-    html +=
-      '<div class="line ' + lineClass + '">' +
-        '<span class="line-label ' + labelClass + '">' +
-          speakerLabel +
-        '</span>' +
-        escapeHtml(entry.text) +
-      '</div>';
-
-  });
-
-
-  if (interimTranscript) {
-
-    const labelClass = isCustomerTurn
-      ? 'line-label-customer'
-      : 'line-label-agent';
-
-    const lineClass = isCustomerTurn
-      ? 'line-customer'
-      : 'line-agent';
-
-    const speakerLabel = isCustomerTurn ? 'Customer' : 'Agent';
-
-    html +=
-      '<div class="line ' + lineClass + ' line-interim">' +
-        '<span class="line-label ' + labelClass + '">' +
-          speakerLabel + ' (live)' +
-        '</span>' +
-        escapeHtml(interimTranscript) +
-      '</div>';
-
-  }
-
-
-  box.innerHTML = html;
-
-  box.scrollTop = box.scrollHeight;
-
-
-  const totalText =
-    conversationLog.map(function(e) { return e.text; }).join(' ') +
-    ' ' + interimTranscript;
-
-  const words = totalText.trim().split(/\s+/).filter(Boolean).length;
-
-  document.getElementById('wordCount').textContent = words + ' words';
-
-}
-
-
-function renderSuggestion(suggestion) {
-
-  const box = document.getElementById('suggestions');
-
-  const empty = box.querySelector('.empty');
-
-  if (empty) box.innerHTML = '';
-
-
-  const div = document.createElement('div');
-
-  div.className = 'suggestion';
-
-  div.innerHTML =
-    '<div class="suggestion-type">' +
-      escapeHtml(suggestion.suggestion_type || 'NEXT STEP') +
-    '</div>' +
-    '<div class="suggestion-text">' +
-      escapeHtml(suggestion.immediate_suggestion || '') +
-    '</div>';
-
-
-  box.prepend(div);
+  setCopilotState(
+    'LISTENING FOR CUSTOMER'
+  );
 
 }
 
 
 // ============================================================
-// START / END CALL
+// START CALL
 // ============================================================
 
 async function startCall() {
@@ -2153,11 +2044,17 @@ async function startCall() {
   clearError();
 
 
-  const agent = document.getElementById('agent');
+  const agent =
+    document.getElementById(
+      'agent'
+    );
+
 
   if (!agent.value) {
 
-    showError('Please select a sales agent.');
+    showError(
+      'Please select a sales agent.'
+    );
 
     return;
 
@@ -2165,151 +2062,615 @@ async function startCall() {
 
 
   const clientName =
-    document.getElementById('clientName').value.trim();
+    document.getElementById(
+      'clientName'
+    ).value.trim();
+
 
   if (!clientName) {
 
-    showError('Please enter client name.');
+    showError(
+      'Please enter client name.'
+    );
 
     return;
 
   }
 
 
-  const micOK = await testMicrophone();
+  /*
+   * IMPORTANT:
+   *
+   * First test actual microphone access.
+   *
+   * This prevents us from incorrectly
+   * reporting SpeechRecognition's
+   * "not-allowed" as a normal permission
+   * problem.
+   */
 
-  if (!micOK) return;
-
-
-  // reset state
-  isCalling         = true;
-  callStartedAt     = Date.now();
-  finalTranscript   = '';
-  interimTranscript = '';
-  conversationLog   = [];
-  suggestions       = [];
-  suggestionCount   = 0;
-  isCustomerTurn    = true;
-  lastUtterance     = '';
-  awaitingResponse  = false;
-  turnNumber        = 0;
+  const micOK =
+    await testMicrophone();
 
 
-  // UI
-  document.getElementById('statusDot').className = 'dot live';
-  document.getElementById('statusText').textContent = 'Call in progress';
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('endBtn').disabled   = false;
-  document.getElementById('forceBtn').style.display = 'inline-block';
+  if (!micOK) {
+
+    return;
+
+  }
+
+
+  isCalling =
+    true;
+
+
+  callStartedAt =
+    Date.now();
+
+
+  finalTranscript =
+    '';
+
+  interimTranscript =
+    '';
+
+  suggestions =
+    [];
+
+  suggestionCount =
+    0;
+
+  speakerMode = 'customer';
+
+  turnBuffer = '';
+
+  lastCustomerTurn = '';
+
+  aiProcessing = false;
+
+  clearTimeout(turnTimer);
+
+
+  document.getElementById(
+    'statusDot'
+  ).className =
+    'dot live';
+
+
+  document.getElementById(
+    'statusText'
+  ).textContent =
+    'Call in progress';
+
+
+  document.getElementById(
+    'startBtn'
+  ).disabled =
+    true;
+
+
+  document.getElementById(
+    'endBtn'
+  ).disabled =
+    false;
+
 
   startTimer();
-  updateSpeakerIndicator('customer');
 
 
-  try { recognition.start(); }
-  catch (error) { console.error('Could not start recognition:', error); }
+  /*
+   * Start speech ONLY after the explicit
+   * user button click.
+   */
 
-}
+  try {
 
+    recognition.start();
 
-function endCall() {
+  } catch (error) {
 
-  if (!isCalling) return;
+    console.error(
+      error
+    );
 
-
-  // clean up timers
-  clearTimeout(silenceTimer);
-  clearTimeout(turnMaxTimer);
-
-  silenceTimer = null;
-  turnMaxTimer = null;
-
-
-  isCalling = false;
-
-  clearInterval(timerInterval);
+  }
 
 
-  try { recognition.stop(); } catch (e) {}
+  // V1: no fixed AI polling.
+  // AI runs only once after a completed customer turn.
+  setSpeakerMode('customer');
 
-
-  document.getElementById('statusDot').className = 'dot ready';
-  document.getElementById('statusText').textContent = 'Call ended';
-  document.getElementById('startBtn').disabled = false;
-  document.getElementById('endBtn').disabled   = true;
-  document.getElementById('forceBtn').style.display = 'none';
-
-  updateSpeakerIndicator('idle');
-
-
-  const duration =
-    callStartedAt ? Math.floor((Date.now() - callStartedAt) / 1000) : 0;
-
-  const agent = document.getElementById('agent');
-  const selected = agent.options[agent.selectedIndex];
-
-
-  fetch('/api/copilot', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action: 'endCall',
-      params: {
-        callId:         'CALL-' + Date.now(),
-        agentId:        agent.value,
-        agentName:      selected && selected.dataset ? selected.dataset.name : '',
-        clientName:     document.getElementById('clientName').value,
-        clientCompany:  document.getElementById('clientCompany').value,
-        clientPhone:    document.getElementById('clientPhone').value,
-        callType:       'Sales Call',
-        startTime:      new Date(callStartedAt || Date.now()).toISOString(),
-        duration:       duration,
-        transcript:     finalTranscript,
-        conversationLog: conversationLog,
-        suggestions:    suggestions
-      }
-    })
-  })
-  .then(function(response) { return response.json(); })
-  .then(function(result) {
-
-    if (result && result.success) {
-      document.getElementById('aiStatus').textContent = 'Call saved ✓';
-    } else {
-      console.error('Call save error:', result);
-    }
-
-  })
-  .catch(function(error) {
-    console.error('Call save error:', error);
-  });
+  setCopilotState(
+    'LISTENING FOR CUSTOMER'
+  );
 
 }
 
+
+// ============================================================
+// TIMER
+// ============================================================
 
 function startTimer() {
 
-  timerInterval = setInterval(function() {
+  timerInterval =
+    setInterval(
+      function() {
 
-    const elapsed =
-      Math.floor((Date.now() - callStartedAt) / 1000);
+        const elapsed =
+          Math.floor(
+            (
+              Date.now() -
+              callStartedAt
+            ) / 1000
+          );
 
-    document.getElementById('timer').textContent = formatTime(elapsed);
 
-  }, 1000);
+        document.getElementById(
+          'timer'
+        ).textContent =
+          formatTime(
+            elapsed
+          );
+
+      },
+      1000
+    );
 
 }
 
 
-function formatTime(seconds) {
+function formatTime(
+  seconds
+) {
 
-  const minutes = Math.floor(seconds / 60);
-  const secs    = seconds % 60;
+  const minutes =
+    Math.floor(
+      seconds / 60
+    );
 
-  return String(minutes).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+  const secs =
+    seconds % 60;
+
+
+  return (
+    String(
+      minutes
+    ).padStart(2,'0') +
+
+    ':' +
+
+    String(
+      secs
+    ).padStart(2,'0')
+  );
 
 }
 
+
+// ============================================================
+// TRANSCRIPT
+// ============================================================
+
+function renderTranscript() {
+
+  const box =
+    document.getElementById(
+      'transcript'
+    );
+
+
+  const text =
+    finalTranscript +
+    (
+      interimTranscript
+        ? '\n' +
+          interimTranscript
+        : ''
+    );
+
+
+  if (!text.trim()) {
+
+    box.innerHTML =
+      '<div class="empty">' +
+      'Listening...' +
+      '</div>';
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    '<div class="line">' +
+    escapeHtml(
+      text
+    ) +
+    '</div>';
+
+
+  box.scrollTop =
+    box.scrollHeight;
+
+
+  const words =
+    text
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .length;
+
+
+  document.getElementById(
+    'wordCount'
+  ).textContent =
+    words +
+    ' words';
+
+}
+
+
+// ============================================================
+// AI — ONE SUGGESTION PER CUSTOMER TURN
+// ============================================================
+
+async function requestSuggestionForCustomerTurn(
+  customerText
+) {
+
+  if (!isCalling || aiProcessing) {
+    return;
+  }
+
+  if (!customerText) {
+    return;
+  }
+
+  aiProcessing = true;
+
+  updateSpeakerUI('AI ANALYZING');
+
+  document.getElementById(
+    'aiStatus'
+  ).textContent =
+    'Thinking...';
+
+
+  const agent =
+    document.getElementById('agent');
+
+  const selected =
+    agent.options[agent.selectedIndex];
+
+
+  const params = {
+
+    agentId:
+      agent.value,
+
+    agentName:
+      selected && selected.dataset
+        ? selected.dataset.name
+        : '',
+
+    clientName:
+      document.getElementById(
+        'clientName'
+      ).value,
+
+    clientCompany:
+      document.getElementById(
+        'clientCompany'
+      ).value,
+
+    clientPhone:
+      document.getElementById(
+        'clientPhone'
+      ).value,
+
+    callType:
+      'Sales Call',
+
+    duration:
+      callStartedAt
+        ? Math.floor(
+            (Date.now() - callStartedAt) / 1000
+          )
+        : 0,
+
+    // IMPORTANT: only this customer turn goes to live AI.
+    transcript:
+      customerText,
+
+    speaker:
+      'customer',
+
+    previousSuggestions:
+      suggestions
+        .slice(0, MAX_PREVIOUS_SUGGESTIONS)
+        .join('\n')
+
+  };
+
+
+  try {
+
+    const response =
+      await fetch(
+        API_ENDPOINT,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'getLiveSuggestion',
+            params: params
+          })
+        }
+      );
+
+    const result =
+      await response.json();
+
+    if (!response.ok || !result || !result.success) {
+
+      throw new Error(
+        result && result.error
+          ? result.error
+          : 'AI suggestion failed.'
+      );
+    }
+
+    const suggestion =
+      result.suggestion;
+
+
+    // Low-information customer turns such as
+    // "hello", "okay", "yes" should not create cards.
+    if (
+      !suggestion ||
+      suggestion.should_suggest === false ||
+      !String(
+        suggestion.immediate_suggestion || ''
+      ).trim()
+    ) {
+
+      document.getElementById(
+        'aiStatus'
+      ).textContent =
+        'No coaching needed';
+
+      setSpeakerMode('agent');
+
+      setCopilotState(
+        'YOU ARE SPEAKING'
+      );
+
+      return;
+    }
+
+
+    suggestionCount++;
+
+    suggestions.unshift(
+      suggestion.immediate_suggestion
+    );
+
+    // Keep only a small memory window.
+    suggestions =
+      suggestions.slice(
+        0,
+        MAX_PREVIOUS_SUGGESTIONS
+      );
+
+
+    renderSuggestion(
+      suggestion
+    );
+
+    document.getElementById(
+      'aiStatus'
+    ).textContent =
+      'Live ✓';
+
+
+    // AI has answered. The next person should be
+    // the salesperson.
+    setSpeakerMode('agent');
+
+    setCopilotState(
+      'YOU ARE SPEAKING'
+    );
+
+  } catch (error) {
+
+    document.getElementById(
+      'aiStatus'
+    ).textContent =
+      'AI error';
+
+    console.error(
+      'AI suggestion error:',
+      error
+    );
+
+    setCopilotState(
+      'AI ERROR'
+    );
+
+  } finally {
+
+    aiProcessing = false;
+
+  }
+
+}
+
+
+// ============================================================
+// SUGGESTION UI — SHOW ONE ACTIVE SUGGESTION
+// ============================================================
+
+function renderSuggestion(
+  suggestion
+) {
+
+  const box =
+    document.getElementById(
+      'suggestions'
+    );
+
+
+  box.innerHTML = '';
+
+
+  const div =
+    document.createElement('div');
+
+  div.className =
+    'suggestion current';
+
+
+  const type =
+    suggestion.suggestion_type ||
+    'NEXT BEST ACTION';
+
+
+  const text =
+    suggestion.immediate_suggestion ||
+    '';
+
+
+  const reason =
+    suggestion.missed_point ||
+    suggestion.coaching_tip ||
+    '';
+
+
+  const phase =
+    suggestion.sop_phase ||
+    '';
+
+
+  const priority =
+    suggestion.priority ||
+    'medium';
+
+
+  div.innerHTML =
+
+    '<div class="suggestion-type">' +
+    escapeHtml(type) +
+    '</div>' +
+
+    '<div class="suggestion-text">' +
+    escapeHtml(text) +
+    '</div>' +
+
+    (
+      reason
+        ?
+          '<div style="margin-top:8px;color:var(--muted);font-size:11px;line-height:1.5">' +
+          escapeHtml(reason) +
+          '</div>'
+        : ''
+    ) +
+
+    (
+      phase
+        ?
+          '<div style="margin-top:8px;color:var(--blue);font-size:10px;font-weight:800">SOP: ' +
+          escapeHtml(phase) +
+          ' · Priority: ' +
+          escapeHtml(priority) +
+          '</div>'
+        : ''
+    );
+
+
+  box.appendChild(
+    div
+  );
+
+}
+
+
+// ============================================================
+// HELPER FUNCTIONS
+// ============================================================
+
+function setCopilotState(state) {
+
+  updateSpeakerUI(
+    state
+  );
+
+}
+
+
+// ============================================================
+// END CALL
+// ============================================================
+
+function endCall() {
+
+  if (!isCalling) {
+    return;
+  }
+
+
+  isCalling =
+    false;
+
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  clearInterval(
+    suggestionTimer
+  );
+
+  clearTimeout(
+    turnTimer
+  );
+
+
+  try {
+
+    recognition.stop();
+
+  } catch (e) {}
+
+
+  document.getElementById(
+    'statusDot'
+  ).className =
+    'dot ready';
+
+
+  document.getElementById(
+    'statusText'
+  ).textContent =
+    'Call ended';
+
+
+  document.getElementById(
+    'startBtn'
+  ).disabled =
+    false;
+
+
+  document.getElementById(
+    'endBtn'
+  ).disabled =
+    true;
+
+}
 
 </script>
 

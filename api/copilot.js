@@ -1,3 +1,12 @@
+// ============================================================
+// VERCEL API PROXY — LIVE SALES COPILOT
+// api/copilot.js
+// ============================================================
+
+const APPS_SCRIPT_URL =
+  process.env.APPS_SCRIPT_URL ||
+  'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE';
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -10,36 +19,29 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
-      error: 'Method not allowed'
+      error: 'Only POST is allowed.'
     });
   }
 
-  const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL;
-
-  if (!APPS_SCRIPT_URL) {
+  if (APPS_SCRIPT_URL.includes('PASTE_YOUR_')) {
     return res.status(500).json({
       success: false,
-      error: 'APPS_SCRIPT_URL environment variable is missing in Vercel.'
+      error: 'APPS_SCRIPT_URL is not configured in Vercel.'
     });
   }
 
   try {
-
-    const response = await fetch(
-      APPS_SCRIPT_URL,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(req.body || {})
-      }
-    );
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(req.body || {})
+    });
 
     const text = await response.text();
 
     let data;
-
     try {
       data = JSON.parse(text);
     } catch (error) {
@@ -52,13 +54,11 @@ export default async function handler(req, res) {
     }
 
     return res.status(response.ok ? 200 : 502).json(data);
-
   } catch (error) {
-
+    console.error('Apps Script proxy error:', error);
     return res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message || 'Unknown proxy error.'
     });
-
   }
 }

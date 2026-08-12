@@ -8,32 +8,11 @@
       "headers": [
         {
           "key": "Permissions-Policy",
-          "value": "microphone=(self), camera=()"
+          "value": "microphone=(self)"
         },
         {
           "key": "Cache-Control",
           "value": "no-cache"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
         }
       ]
     }

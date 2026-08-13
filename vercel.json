@@ -6,12 +6,15 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Permissions-Policy", "value": "microphone=(self)" },
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        {
+          "key": "Permissions-Policy",
+          "value": "microphone=(self)"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
       ]
     }
-  ],
-  "rewrites": [
-    { "source": "/dashboard", "destination": "/dashboard.html" }
   ]
 }

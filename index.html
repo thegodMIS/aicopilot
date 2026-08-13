@@ -1096,12 +1096,14 @@
 // ============================================================
 
 // Vercel frontend: Apps Script is reached through /api/copilot.
+// ============================================================
+
+
 const DASHBOARD_URL =
-  "https://script.google.com/a/macros/mentorwater.com/s/AKfycbzRD9UQ8eB9bbz3z0FsIG_qgoMn0sVDoSYGgJJY1DVhHXP547D9URRoMB2alrkHBC5pvQ/exec?page=dashboard";
+  "https://script.google.com/a/macros/mentorwater.com/s/AKfycbzRD9UQ8eB9bbz3z0FsIG_qgoMn0sVDoSYGgJJY1DVhHXP547D9URRoMB2alrkHBC5pvQ/exec";
 
 const API_ENDPOINT =
   "/api/copilot";
-
 
 // ============================================================
 // STATE
@@ -1175,18 +1177,12 @@ window.addEventListener(
 
 function goDashboard() {
 
-  if (!DASHBOARD_URL || DASHBOARD_URL.indexOf('PASTE_') === 0) {
+  const url =
+    DASHBOARD_URL +
+    "?page=dashboard";
 
-    showError(
-      'Dashboard URL is not configured.'
-    );
-
-    return;
-
-  }
-
-  window.location.href = DASHBOARD_URL + '?page=dashboard';
-
+  window.location.href =
+    url;
 }
 
 

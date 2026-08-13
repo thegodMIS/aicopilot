@@ -1,2276 +1,339 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-  <base target="_top">
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1"
-  >
-
-  <title>Mentor Group — Live Call Assistant</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mentor Group — Live Sales Call Assistant</title>
   <style>
-
-    :root {
-      --bg:#050912;
-      --panel:#0b1220;
-      --panel2:#101a2b;
-      --border:rgba(255,255,255,.08);
-      --text:#e8edf5;
-      --muted:#8190a8;
-      --aqua:#00d4aa;
-      --green:#20d17a;
-      --gold:#f5c518;
-      --blue:#4d9fff;
-      --red:#ff5570;
-      --orange:#ff9f43;
-    }
-
-    * {
-      box-sizing:border-box;
-    }
-
-    body {
-
-      margin:0;
-
-      min-height:100vh;
-
-      background:
-        radial-gradient(
-          circle at top right,
-          rgba(0,212,170,.07),
-          transparent 30%
-        ),
-        var(--bg);
-
-      color:var(--text);
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    }
-
-    .nav {
-
-      height:66px;
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-      padding:0 24px;
-
-      border-bottom:
-        1px solid var(--border);
-
-      background:
-        rgba(7,13,24,.97);
-
-    }
-
-    .brand {
-
-      display:flex;
-
-      align-items:center;
-
-      gap:11px;
-
-    }
-
-    .logo {
-
-      width:38px;
-
-      height:38px;
-
-      border-radius:10px;
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:center;
-
-      background:
-        linear-gradient(
-          135deg,
-          #00d4aa,
-          #008a78
-        );
-
-      color:#00110d;
-
-    }
-
-    .brand-title {
-
-      font-size:15px;
-
-      font-weight:800;
-
-    }
-
-    .brand-sub {
-
-      color:var(--muted);
-
-      font-size:10px;
-
-      margin-top:3px;
-
-    }
-
-    .nav-actions {
-
-      display:flex;
-
-      gap:8px;
-
-    }
-
-    button {
-
-      font-family:inherit;
-
-    }
-
-    .btn {
-
-      border:
-        1px solid var(--border);
-
-      background:
-        rgba(255,255,255,.035);
-
-      color:var(--text);
-
-      border-radius:8px;
-
-      padding:10px 15px;
-
-      cursor:pointer;
-
-      font-size:12px;
-
-      font-weight:700;
-
-    }
-
-    .btn:hover {
-
-      background:
-        rgba(255,255,255,.07);
-
-    }
-
-    .btn-primary {
-
-      background:var(--aqua);
-
-      color:#00110d;
-
-      border-color:var(--aqua);
-
-    }
-
-    .btn-danger {
-
-      background:
-        rgba(255,85,112,.12);
-
-      color:var(--red);
-
-      border-color:
-        rgba(255,85,112,.25);
-
-    }
-
-    .btn:disabled {
-
-      opacity:.45;
-
-      cursor:not-allowed;
-
-    }
-
-    .page {
-
-      max-width:1450px;
-
-      margin:auto;
-
-      padding:22px;
-
-    }
-
-    .grid {
-
-      display:grid;
-
-      grid-template-columns:
-        330px
-        minmax(0,1fr);
-
-      gap:18px;
-
-    }
-
-    .panel {
-
-      background:
-        rgba(11,18,32,.92);
-
-      border:
-        1px solid var(--border);
-
-      border-radius:14px;
-
-      overflow:hidden;
-
-    }
-
-    .panel-head {
-
-      padding:16px 18px;
-
-      border-bottom:
-        1px solid var(--border);
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-    }
-
-    .panel-title {
-
-      font-size:13px;
-
-      font-weight:800;
-
-    }
-
-    .panel-body {
-
-      padding:18px;
-
-    }
-
-    label {
-
-      display:block;
-
-      color:var(--muted);
-
-      font-size:10px;
-
-      text-transform:uppercase;
-
-      letter-spacing:.7px;
-
-      margin-bottom:6px;
-
-    }
-
-    input,
-    select,
-    textarea {
-
-      width:100%;
-
-      border:
-        1px solid var(--border);
-
-      background:#080f1c;
-
-      color:var(--text);
-
-      border-radius:8px;
-
-      padding:11px;
-
-      outline:none;
-
-      font-size:12px;
-
-    }
-
-    .field {
-
-      margin-bottom:14px;
-
-    }
-
-    .status {
-
-      display:flex;
-
-      align-items:center;
-
-      gap:8px;
-
-      margin:15px 0;
-
-    }
-
-    .dot {
-
-      width:9px;
-
-      height:9px;
-
-      border-radius:50%;
-
-      background:#6c7a91;
-
-    }
-
-    .dot.ready {
-
-      background:var(--aqua);
-
-    }
-
-    .dot.live {
-
-      background:var(--red);
-
-      animation:pulse 1s infinite;
-
-    }
-
-    @keyframes pulse {
-
-      50% {
-        opacity:.35;
-      }
-
-    }
-
-    .timer {
-
-      font-size:31px;
-
-      font-weight:900;
-
-      margin:10px 0 17px;
-
-    }
-
-    .buttons {
-
-      display:flex;
-
-      gap:8px;
-
-    }
-
-    .buttons .btn {
-
-      flex:1;
-
-    }
-
-    .diagnostic {
-
-      margin-top:18px;
-
-      border:
-        1px solid
-        rgba(255,159,67,.2);
-
-      background:
-        rgba(255,159,67,.05);
-
-      border-radius:10px;
-
-      padding:14px;
-
-    }
-
-    .diagnostic-title {
-
-      font-size:11px;
-
-      font-weight:900;
-
-      color:var(--orange);
-
-      margin-bottom:10px;
-
-    }
-
-    .diagnostic-row {
-
-      display:flex;
-
-      justify-content:space-between;
-
-      gap:10px;
-
-      padding:6px 0;
-
-      border-bottom:
-        1px solid rgba(255,255,255,.04);
-
-      font-size:10px;
-
-    }
-
-    .diagnostic-row:last-child {
-
-      border-bottom:0;
-
-    }
-
-    .good {
-
-      color:var(--green);
-
-    }
-
-    .bad {
-
-      color:var(--red);
-
-    }
-
-    .warn {
-
-      color:var(--orange);
-
-    }
-
-    .transcript {
-
-      min-height:560px;
-
-      max-height:650px;
-
-      overflow:auto;
-
-      padding:18px;
-
-      background:#060c17;
-
-    }
-
-    .empty {
-
-      color:var(--muted);
-
-      text-align:center;
-
-      padding:70px 20px;
-
-      font-size:12px;
-
-    }
-
-    .line {
-
-      padding:10px 12px;
-
-      margin-bottom:8px;
-
-      border-left:
-        2px solid
-        rgba(0,212,170,.35);
-
-      background:
-        rgba(255,255,255,.02);
-
-      font-size:12px;
-
-      line-height:1.55;
-
-      white-space:pre-wrap;
-
-    }
-
-    .suggestions {
-
-      min-height:250px;
-
-      max-height:400px;
-
-      overflow:auto;
-
-      padding:14px;
-
-      background:#060c17;
-
-    }
-
-    .suggestion {
-
-      padding:13px;
-
-      margin-bottom:9px;
-
-      border:
-        1px solid var(--border);
-
-      border-radius:9px;
-
-      background:
-        rgba(0,212,170,.04);
-
-    }
-
-    .suggestion-type {
-
-      color:var(--aqua);
-
-      font-size:9px;
-
-      font-weight:900;
-
-      text-transform:uppercase;
-
-      margin-bottom:7px;
-
-    }
-
-    .copilot-turn-bar {
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-      gap:10px;
-
-      padding:10px 12px;
-
-      margin:0 0 10px 0;
-
-      border:1px solid var(--border);
-
-      border-radius:10px;
-
-      background:rgba(255,255,255,.025);
-
-    }
-
-    .turn-state {
-
-      display:flex;
-
-      align-items:center;
-
-      gap:8px;
-
-      font-size:11px;
-
-      font-weight:800;
-
-      color:var(--muted);
-
-      letter-spacing:.2px;
-
-    }
-
-    .turn-dot {
-
-      width:8px;
-
-      height:8px;
-
-      border-radius:50%;
-
-      background:var(--gold);
-
-      box-shadow:0 0 0 3px rgba(245,197,24,.12);
-
-    }
-
-    .turn-dot.customer {
-      background:var(--aqua);
-      box-shadow:0 0 0 3px rgba(0,212,170,.12);
-    }
-
-    .turn-dot.agent {
-      background:var(--blue);
-      box-shadow:0 0 0 3px rgba(77,159,255,.12);
-    }
-
-    .turn-dot.ai {
-      background:var(--orange);
-      box-shadow:0 0 0 3px rgba(255,159,67,.12);
-    }
-
-    .turn-buttons {
-
-      display:flex;
-
-      gap:6px;
-
-    }
-
-    .turn-btn {
-
-      border:1px solid var(--border);
-
-      background:rgba(255,255,255,.035);
-
-      color:var(--text);
-
-      border-radius:7px;
-
-      padding:7px 9px;
-
-      cursor:pointer;
-
-      font-size:10px;
-
-      font-weight:800;
-
-    }
-
-    .turn-btn.active {
-
-      background:rgba(0,212,170,.12);
-
-      color:var(--aqua);
-
-      border-color:rgba(0,212,170,.28);
-
-    }
-
-    .suggestion.current {
-
-      border-color:rgba(0,212,170,.22);
-
-      box-shadow:0 0 0 1px rgba(0,212,170,.06) inset;
-
-    }
-
-    .suggestion-text {
-
-      font-size:13px;
-
-      line-height:1.5;
-
-      font-weight:700;
-
-    }
-
-    .error {
-
-      display:none;
-
-      margin-bottom:18px;
-
-      padding:15px;
-
-      border:
-        1px solid
-        rgba(255,85,112,.3);
-
-      background:
-        rgba(255,85,112,.08);
-
-      color:#ff9aaa;
-
-      border-radius:10px;
-
-      font-size:12px;
-
-      white-space:pre-wrap;
-
-      line-height:1.55;
-
-    }
-
-    @media(max-width:950px) {
-
-      .grid {
-        grid-template-columns:1fr;
-      }
-
-    }
-
+    :root{--bg:#050912;--panel:#0b1220;--panel2:#101a2b;--border:rgba(255,255,255,.08);--text:#e8edf5;--muted:#8190a8;--aqua:#00d4aa;--green:#20d17a;--gold:#f5c518;--blue:#4d9fff;--red:#ff5570;--orange:#ff9f43}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,rgba(0,212,170,.07),transparent 30%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    .nav{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(7,13,24,.97);position:sticky;top:0;z-index:10}
+    .brand{display:flex;align-items:center;gap:11px}.logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00d4aa,#008a78);color:#00110d}.brand-title{font-size:15px;font-weight:800}.brand-sub{color:var(--muted);font-size:10px;margin-top:3px}
+    .nav-actions{display:flex;gap:8px}.btn{border:1px solid var(--border);background:rgba(255,255,255,.035);color:var(--text);border-radius:8px;padding:10px 15px;cursor:pointer;font-size:12px;font-weight:700}.btn:hover{background:rgba(255,255,255,.07)}.btn-primary{background:var(--aqua);color:#00110d;border-color:var(--aqua)}.btn-danger{background:rgba(255,85,112,.12);color:var(--red);border-color:rgba(255,85,112,.25)}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .page{max-width:1450px;margin:auto;padding:22px}.grid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.panel{background:rgba(11,18,32,.92);border:1px solid var(--border);border-radius:14px;overflow:hidden}.panel-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}.panel-title{font-size:13px;font-weight:800}.panel-body{padding:18px}
+    label{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}input,select{width:100%;border:1px solid var(--border);background:#080f1c;color:var(--text);border-radius:8px;padding:11px;outline:none;font-size:12px}.field{margin-bottom:14px}
+    .status{display:flex;align-items:center;gap:8px;margin:15px 0}.dot{width:9px;height:9px;border-radius:50%;background:#6c7a91}.dot.ready{background:var(--aqua)}.dot.live{background:var(--red);animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.35}}
+    .timer{font-size:31px;font-weight:900;margin:10px 0 17px}.buttons{display:flex;gap:8px}.buttons .btn{flex:1}.diagnostic{margin-top:18px;border:1px solid rgba(255,159,67,.2);background:rgba(255,159,67,.05);border-radius:10px;padding:14px}.diagnostic-title{font-size:11px;font-weight:900;color:var(--orange);margin-bottom:10px}.diagnostic-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px}.diagnostic-row:last-child{border-bottom:0}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--orange)}
+    .transcript{min-height:510px;max-height:570px;overflow:auto;padding:18px;background:#060c17}.empty{color:var(--muted);text-align:center;padding:70px 20px;font-size:12px}.line{padding:10px 12px;margin-bottom:8px;border-left:2px solid rgba(0,212,170,.35);background:rgba(255,255,255,.02);font-size:12px;line-height:1.55;white-space:pre-wrap}.line.customer{border-left-color:var(--aqua)}.line.agent{border-left-color:var(--blue)}
+    .suggestions{min-height:190px;max-height:300px;overflow:auto;padding:14px;background:#060c17}.suggestion{padding:13px;margin-bottom:9px;border:1px solid var(--border);border-radius:9px;background:rgba(0,212,170,.04)}.suggestion-type{color:var(--aqua);font-size:9px;font-weight:900;text-transform:uppercase;margin-bottom:7px}.suggestion-text{font-size:13px;line-height:1.5;font-weight:700}.error{display:none;margin-bottom:18px;padding:15px;border:1px solid rgba(255,85,112,.3);background:rgba(255,85,112,.08);color:#ff9aaa;border-radius:10px;font-size:12px;white-space:pre-wrap;line-height:1.55}
+    .turnbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);margin:10px 14px}.turnstate{font-size:11px;font-weight:800;color:var(--muted)}.turnbuttons{display:flex;gap:6px;flex-wrap:wrap}.turn-btn{border:1px solid var(--border);background:rgba(255,255,255,.035);color:var(--text);border-radius:7px;padding:7px 9px;cursor:pointer;font-size:10px;font-weight:800}.turn-btn.active{background:rgba(0,212,170,.12);color:var(--aqua);border-color:rgba(0,212,170,.28)}
+    @media(max-width:950px){.grid{grid-template-columns:1fr}.transcript{min-height:380px}}@media(max-width:600px){.nav{padding:0 14px}.page{padding:14px}.brand-sub{display:none}.buttons{flex-direction:column}}
   </style>
-
 </head>
-
-
 <body>
+  <nav class="nav">
+    <div class="brand"><div class="logo">🎯</div><div><div class="brand-title">Mentor Group</div><div class="brand-sub">Live Sales Call Assistant</div></div></div>
+    <div class="nav-actions"><button class="btn" onclick="openDashboard()">← Dashboard</button></div>
+  </nav>
 
+  <main class="page">
+    <div id="errorBox" class="error"></div>
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head"><div class="panel-title">Call Details</div><div id="loadStatus" style="font-size:10px;color:var(--muted)">Loading</div></div>
+        <div class="panel-body">
+          <div class="field"><label>Sales Agent</label><select id="agent"><option value="">Loading...</option></select></div>
+          <div class="field"><label>Client Name</label><input id="clientName" placeholder="Client name"></div>
+          <div class="field"><label>Client Company</label><input id="clientCompany" placeholder="Company"></div>
+          <div class="field"><label>Client Phone</label><input id="clientPhone" placeholder="+91..."></div>
 
-<nav class="nav">
+          <div class="status"><div id="statusDot" class="dot ready"></div><span id="statusText">Ready</span></div>
+          <div id="timer" class="timer">00:00</div>
 
-  <div class="brand">
+          <div class="buttons">
+            <button id="startBtn" class="btn btn-primary" onclick="startCall()">▶ Start Call</button>
+            <button id="endBtn" class="btn btn-danger" onclick="endCall()" disabled>■ End</button>
+          </div>
 
-    <div class="logo">
-      🎯
+          <div class="diagnostic">
+            <div class="diagnostic-title">MICROPHONE DIAGNOSTIC</div>
+            <div class="diagnostic-row"><span>Secure Context</span><span id="secureStatus">Checking...</span></div>
+            <div class="diagnostic-row"><span>Microphone API</span><span id="mediaStatus">Checking...</span></div>
+            <div class="diagnostic-row"><span>Browser Permission</span><span id="permissionStatus">Checking...</span></div>
+            <div class="diagnostic-row"><span>Whisper Recorder</span><span id="speechStatus">Checking...</span></div>
+            <div class="diagnostic-row"><span>Page Context</span><span id="contextStatus">Checking...</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div class="panel-title">🎙 Live Transcript</div><div id="wordCount" style="font-size:10px;color:var(--muted)">0 words</div></div>
+        <div class="turnbar"><div id="turnState" class="turnstate">IDLE</div><div class="turnbuttons"><button id="customerBtn" class="turn-btn" onclick="setSpeakerMode('customer')" disabled>🎧 Customer</button><button id="finishBtn" class="turn-btn" onclick="finishCustomerTurn()" disabled>✓ Customer Finished</button><button id="agentBtn" class="turn-btn" onclick="setSpeakerMode('agent')" disabled>🗣️ Me</button></div></div>
+        <div class="transcript" id="transcript"><div class="empty">Click Start Call. Then press Customer to record the customer's turn.</div></div>
+        <div class="panel-head"><div class="panel-title">🧠 AI Coaching</div><div id="aiStatus" style="font-size:10px;color:var(--muted)">Waiting</div></div>
+        <div class="suggestions" id="suggestions"><div class="empty">AI suggestions will appear here.</div></div>
+      </section>
     </div>
-
-    <div>
-
-      <div class="brand-title">
-        Mentor Group
-      </div>
-
-      <div class="brand-sub">
-        Live Sales Call Assistant
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="nav-actions">
-
-    <button
-      class="btn"
-      onclick="goDashboard()"
-    >
-      ← Dashboard
-    </button>
-
-  </div>
-
-</nav>
-
-
-<main class="page">
-
-
-  <div
-    class="error"
-    id="errorBox"
-  ></div>
-
-
-  <div class="grid">
-
-
-    <!-- LEFT -->
-
-    <section class="panel">
-
-      <div class="panel-head">
-
-        <div class="panel-title">
-          Call Details
-        </div>
-
-        <div
-          id="loadStatus"
-          style="font-size:10px;color:var(--muted)"
-        >
-          Loading
-        </div>
-
-      </div>
-
-
-      <div class="panel-body">
-
-
-        <div class="field">
-
-          <label>
-            Sales Agent
-          </label>
-
-          <select id="agent">
-
-            <option>
-              Loading...
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Client Name
-          </label>
-
-          <input
-            id="clientName"
-            placeholder="Client name"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Client Company
-          </label>
-
-          <input
-            id="clientCompany"
-            placeholder="Company"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Client Phone
-          </label>
-
-          <input
-            id="clientPhone"
-            placeholder="+91..."
-          >
-
-        </div>
-
-
-        <div class="status">
-
-          <div
-            class="dot ready"
-            id="statusDot"
-          ></div>
-
-          <span
-            id="statusText"
-          >
-            Ready
-          </span>
-
-        </div>
-
-
-        <div
-          class="timer"
-          id="timer"
-        >
-          00:00
-        </div>
-
-
-        <div class="buttons">
-
-          <button
-            class="btn btn-primary"
-            id="startBtn"
-            onclick="startCall()"
-          >
-            ▶ Start Call
-          </button>
-
-          <button
-            class="btn btn-danger"
-            id="endBtn"
-            onclick="endCall()"
-            disabled
-          >
-            ■ End
-          </button>
-
-        </div>
-
-
-        <!-- DIAGNOSTIC -->
-
-        <div class="diagnostic">
-
-          <div class="diagnostic-title">
-            MICROPHONE DIAGNOSTIC
-          </div>
-
-
-          <div class="diagnostic-row">
-
-            <span>
-              Secure Context
-            </span>
-
-            <span
-              id="secureStatus"
-            >
-              Checking...
-            </span>
-
-          </div>
-
-
-          <div class="diagnostic-row">
-
-            <span>
-              Microphone API
-            </span>
-
-            <span
-              id="mediaStatus"
-            >
-              Checking...
-            </span>
-
-          </div>
-
-
-          <div class="diagnostic-row">
-
-            <span>
-              Browser Permission
-            </span>
-
-            <span
-              id="permissionStatus"
-            >
-              Checking...
-            </span>
-
-          </div>
-
-
-          <div class="diagnostic-row">
-
-            <span>
-              Whisper Transcription
-            </span>
-
-            <span
-              id="speechStatus"
-            >
-              Checking...
-            </span>
-
-          </div>
-
-
-          <div class="diagnostic-row">
-
-            <span>
-              Page Context
-            </span>
-
-            <span
-              id="contextStatus"
-            >
-              Checking...
-            </span>
-
-          </div>
-
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- RIGHT -->
-
-    <section class="panel">
-
-      <div class="panel-head">
-
-        <div class="panel-title">
-          🎙 Live Transcript
-        </div>
-
-        <div
-          id="wordCount"
-          style="font-size:10px;color:var(--muted)"
-        >
-          0 words
-        </div>
-
-      </div>
-
-
-      <div
-        class="transcript"
-        id="transcript"
-      >
-
-        <div class="empty">
-
-          Click Start Call and speak.
-
-        </div>
-
-      </div>
-
-
-      <div class="panel-head">
-
-        <div class="panel-title">
-          🧠 AI Coaching
-        </div>
-
-        <div
-          id="aiStatus"
-          style="font-size:10px;color:var(--muted)"
-        >
-          Waiting
-        </div>
-
-      </div>
-
-
-      <div class="copilot-turn-bar">
-
-        <div class="turn-state">
-
-          <span
-            id="turnDot"
-            class="turn-dot customer"
-          ></span>
-
-          <span id="turnStateText">
-            CUSTOMER SPEAKING
-          </span>
-
-        </div>
-
-        <div class="turn-buttons">
-
-          <button
-            id="customerTurnBtn"
-            class="turn-btn active"
-            onclick="setSpeakerMode('customer')"
-          >
-            🎧 Customer
-          </button>
-
-          <button
-            id="agentTurnBtn"
-            class="turn-btn"
-            onclick="setSpeakerMode('agent')"
-          >
-            🗣️ Me
-          </button>
-
-          <button
-            id="customerDoneBtn"
-            class="turn-btn"
-            onclick="finishCustomerRecording()"
-            disabled
-          >
-            ✓ Customer Finished
-          </button>
-
-        </div>
-
-      </div>
-
-      <div
-        class="suggestions"
-        id="suggestions"
-      >
-
-        <div class="empty">
-          AI suggestions will appear here.
-        </div>
-
-      </div>
-
-    </section>
-
-
-  </div>
-
-
-</main>
-
+  </main>
 
 <script>
-
-
-// ============================================================
-// SERVER URL
-// ============================================================
-
-// Vercel frontend: Apps Script is reached through /api/copilot.
-// ============================================================
-
-
-const DASHBOARD_URL =
-  "https://script.google.com/a/macros/mentorwater.com/s/AKfycbzRD9UQ8eB9bbz3z0FsIG_qgoMn0sVDoSYGgJJY1DVhHXP547D9URRoMB2alrkHBC5pvQ/exec";
-
-const API_ENDPOINT =
-  "/api/copilot";
-
-// ============================================================
-// STATE
-// ============================================================
+const API_ENDPOINT = '/api/copilot';
+const TRANSCRIBE_ENDPOINT = '/api/transcribe';
+const DASHBOARD_PATH = '/dashboard';
 
 let mediaRecorder = null;
 let mediaStream = null;
 let recordingMimeType = 'audio/webm';
-
-let recognitionSupported = true;
-
 let isCalling = false;
-
 let callStartedAt = null;
 let callId = null;
-
 let timerInterval = null;
-
-let finalTranscript = '';
-
-let interimTranscript = '';
 let isRecordingCustomer = false;
-
-let suggestions = [];
-
+let speakerMode = 'idle';
+let aiProcessing = false;
 let initialData = null;
-
+let suggestions = [];
+let conversation = [];
+let lastCustomerTurn = '';
+let suggestionCount = 0;
 let maxSuggestions = 25;
 
-let suggestionCount = 0;
+window.addEventListener('load', function(){
+  runDiagnostics();
+  loadInitialData();
+});
 
-let suggestionSeconds = 10;
+function openDashboard(){ window.location.href = DASHBOARD_PATH; }
 
-// ---------------- V1 LIVE-CALL STATE ----------------
-// In V1 we use an alternating speaker model:
-// Customer -> AI -> Salesperson -> Customer -> AI ...
-// The manual buttons are a safe override when the turn changes unexpectedly.
-let speakerMode = 'customer';
+function showError(message){
+  const box=document.getElementById('errorBox');
+  box.textContent=message||'Unknown error'; box.style.display='block';
+}
+function clearError(){ document.getElementById('errorBox').style.display='none'; }
+function escapeHtml(value){
+  return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
 
-let turnBuffer = '';
+async function runDiagnostics(){
+  const secure=window.isSecureContext===true;
+  setDiag('secureStatus',secure?'YES':'NO',secure?'good':'bad');
+  const media=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+  setDiag('mediaStatus',media?'AVAILABLE':'BLOCKED / MISSING',media?'good':'bad');
+  setDiag('contextStatus',window.top===window.self?'TOP LEVEL':'IFRAME',window.top===window.self?'good':'warn');
+  setDiag('speechStatus',window.MediaRecorder?'WHISPER READY':'NOT SUPPORTED',window.MediaRecorder?'good':'bad');
+  if(navigator.permissions&&navigator.permissions.query){
+    try{
+      const p=await navigator.permissions.query({name:'microphone'});
+      updatePermission(p.state);
+      p.onchange=function(){updatePermission(p.state);};
+    }catch(e){setDiag('permissionStatus','CLICK START','warn');}
+  }else{setDiag('permissionStatus','CLICK START','warn');}
+}
+function updatePermission(state){ setDiag('permissionStatus',String(state).toUpperCase(),state==='granted'?'good':state==='prompt'?'warn':'bad'); }
+function setDiag(id,value,cls){const el=document.getElementById(id); if(!el)return; el.textContent=value; el.className=cls;}
 
-let turnTimer = null;
-
-let aiProcessing = false;
-
-let lastCustomerTurn = '';
-
-const TURN_END_SILENCE_MS = 900;
-
-const MIN_CUSTOMER_TURN_CHARS = 3;
-
-const MAX_PREVIOUS_SUGGESTIONS = 3;
-
-
-
-// ============================================================
-// LOAD
-// ============================================================
-
-window.addEventListener(
-  'load',
-  function() {
-
-    runMicrophoneDiagnostics();
-
-    loadInitialData();
-
+async function loadInitialData(){
+  try{
+    const r=await fetch(API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getInitialData'})});
+    const data=await r.json();
+    if(!r.ok||!data.success)throw new Error(data.error||'Could not load sales team.');
+    initialData=data; maxSuggestions=Number(data.maxSuggestions)||25;
+    populateAgents(data.agents||[]);
+    document.getElementById('loadStatus').textContent='Ready';
+  }catch(e){
+    document.getElementById('loadStatus').textContent='Error';
+    showError('Could not load application data:\n\n'+e.message);
   }
-);
-
-
-// ============================================================
-// DASHBOARD
-// ============================================================
-
-function goDashboard() {
-
-  const url =
-    DASHBOARD_URL +
-    "?page=dashboard";
-
-  window.location.href =
-    url;
 }
 
-
-// ============================================================
-// ESCAPE
-// ============================================================
-
-function escapeHtml(
-  value
-) {
-
-  return String(
-    value || ''
-  )
-
-  .replace(
-    /&/g,
-    '&amp;'
-  )
-
-  .replace(
-    /</g,
-    '&lt;'
-  )
-
-  .replace(
-    />/g,
-    '&gt;'
-  )
-
-  .replace(
-    /"/g,
-    '&quot;'
-  )
-
-  .replace(
-    /'/g,
-    '&#039;'
-  );
-
+function populateAgents(agents){
+  const select=document.getElementById('agent');
+  select.innerHTML='<option value="">Select agent</option>';
+  agents.forEach(function(a){
+    const o=document.createElement('option');
+    o.value=a['Agent ID']||a['Name']||''; o.dataset.name=a['Name']||'';
+    o.textContent=(a['Name']||'Unknown')+(a['Role']?' — '+a['Role']:''); select.appendChild(o);
+  });
 }
+function selectedAgentName(){const s=document.getElementById('agent');const o=s.options[s.selectedIndex];return o&&o.dataset?o.dataset.name||'':'';}
 
-
-// ============================================================
-// ERROR
-// ============================================================
-
-function showError(
-  message
-) {
-
-  const box =
-    document.getElementById(
-      'errorBox'
-    );
-
-
-  box.style.display =
-    'block';
-
-
-  box.textContent =
-    message;
-
-}
-
-
-function clearError() {
-
-  document.getElementById(
-    'errorBox'
-  ).style.display =
-    'none';
-
-}
-
-
-// ============================================================
-// MICROPHONE DIAGNOSTICS — WHISPER V1
-// ============================================================
-
-async function runMicrophoneDiagnostics() {
-
-  const secure = window.isSecureContext === true;
-  setDiagnostic('secureStatus', secure ? 'YES' : 'NO', secure ? 'good' : 'bad');
-
-  const mediaAvailable = !!(
-    navigator.mediaDevices &&
-    navigator.mediaDevices.getUserMedia &&
-    window.MediaRecorder
-  );
-
-  setDiagnostic(
-    'mediaStatus',
-    mediaAvailable ? 'AVAILABLE' : 'BLOCKED / MISSING',
-    mediaAvailable ? 'good' : 'bad'
-  );
-
-  const context = window.top === window.self ? 'TOP LEVEL' : 'IFRAME';
-  setDiagnostic('contextStatus', context, context === 'TOP LEVEL' ? 'good' : 'warn');
-
-  if (navigator.permissions && navigator.permissions.query) {
-    try {
-      const permission = await navigator.permissions.query({ name: 'microphone' });
-      setDiagnostic(
-        'permissionStatus',
-        permission.state.toUpperCase(),
-        permission.state === 'granted'
-          ? 'good'
-          : permission.state === 'prompt'
-            ? 'warn'
-            : 'bad'
-      );
-
-      permission.onchange = function() {
-        setDiagnostic(
-          'permissionStatus',
-          permission.state.toUpperCase(),
-          permission.state === 'granted' ? 'good' : 'bad'
-        );
-      };
-    } catch (error) {
-      setDiagnostic('permissionStatus', 'UNAVAILABLE', 'warn');
-    }
-  } else {
-    setDiagnostic('permissionStatus', 'UNAVAILABLE', 'warn');
-  }
-
-  setDiagnostic(
-    'speechStatus',
-    window.MediaRecorder ? 'READY' : 'NOT SUPPORTED',
-    window.MediaRecorder ? 'good' : 'bad'
-  );
-}
-
-
-// ============================================================
-// MICROPHONE TEST
-// ============================================================
-
-async function testMicrophone() {
+async function startCall(){
   clearError();
+  if(!document.getElementById('agent').value){showError('Please select a sales agent.');return;}
+  if(!document.getElementById('clientName').value.trim()){showError('Please enter client name.');return;}
 
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-    showError(
-      'Microphone API is unavailable. Open the Vercel app directly over HTTPS.'
-    );
-    return false;
-  }
+  const mic=await requestMicrophone();
+  if(!mic)return;
 
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    });
+  isCalling=true; callStartedAt=Date.now(); callId='CALL-'+crypto.randomUUID().slice(0,8).toUpperCase();
+  suggestions=[]; conversation=[]; lastCustomerTurn=''; suggestionCount=0;
+  finalReset();
 
-    stream.getTracks().forEach(function(track) {
-      track.stop();
-    });
-
-    setDiagnostic('mediaStatus', 'WORKING', 'good');
-    setDiagnostic('permissionStatus', 'GRANTED', 'good');
-    setDiagnostic('speechStatus', 'WHISPER READY', 'good');
-
-    return true;
-
-  } catch (error) {
-    console.error('getUserMedia error:', error);
-
-    if (error && error.name === 'NotAllowedError') {
-      showError(
-        'Microphone access was denied. Click the lock icon in Chrome → Microphone → Allow, then reload the page.'
-      );
-    } else {
-      showError(
-        'Microphone error: ' +
-        (error && error.name ? error.name : 'UnknownError') +
-        '\n\n' +
-        (error && error.message ? error.message : '')
-      );
-    }
-
-    return false;
-  }
+  document.getElementById('startBtn').disabled=true; document.getElementById('endBtn').disabled=false;
+  ['customerBtn','finishBtn','agentBtn'].forEach(id=>document.getElementById(id).disabled=false);
+  document.getElementById('statusDot').className='dot live'; document.getElementById('statusText').textContent='Call in progress';
+  startTimer(); setSpeakerMode('customer');
 }
 
-// ============================================================
-// DIAGNOSTIC UI
-// ============================================================
-
-function setDiagnostic(
-  id,
-  value,
-  className
-) {
-
-  const element =
-    document.getElementById(
-      id
-    );
-
-
-  if (!element) {
-    return;
-  }
-
-
-  element.textContent =
-    value;
-
-
-  element.className =
-    className;
-
+async function requestMicrophone(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){showError('This browser cannot record microphone audio. Use Chrome/Edge over HTTPS.');return false;}
+  try{
+    if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());}
+    mediaStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    setDiag('mediaStatus','WORKING','good'); setDiag('permissionStatus','GRANTED','good');
+    recordingMimeType=getSupportedMime(); return true;
+  }catch(e){showError('Microphone access failed:\n\n'+(e.message||e.name));return false;}
+}
+function getSupportedMime(){
+  const types=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];
+  return types.find(t=>MediaRecorder.isTypeSupported(t))||'';
+}
+function setupRecorder(){
+  if(!mediaStream)throw new Error('Microphone is not active.');
+  mediaRecorder=recordingMimeType?new MediaRecorder(mediaStream,{mimeType:recordingMimeType}):new MediaRecorder(mediaStream);
+  const chunks=[];
+  mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  mediaRecorder.onstop=async()=>{
+    const blob=new Blob(chunks,{type:mediaRecorder.mimeType||recordingMimeType||'audio/webm'});
+    if(isCalling&&isRecordingCustomer){await transcribeCustomerTurn(blob);}
+  };
+  return mediaRecorder;
 }
 
-
-// ============================================================
-// EXPLICIT MICROPHONE TEST
-// ============================================================
-
-async function testMicrophone() {
-
-  clearError();
-
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-
-    showError(
-      'MICROPHONE API BLOCKED\n\n' +
-
-      'The browser does not expose getUserMedia() to this Apps Script page.\n\n' +
-
-      'This is a Permissions Policy / Apps Script iframe restriction, not a Chrome microphone permission problem.'
-    );
-
-    return false;
-
-  }
-
-
-  try {
-
-    const stream =
-      await navigator.mediaDevices.getUserMedia({
-        audio:true
-      });
-
-
-    stream
-      .getTracks()
-      .forEach(
-        function(track) {
-          track.stop();
-        }
-      );
-
-
-    setDiagnostic(
-      'mediaStatus',
-      'WORKING',
-      'good'
-    );
-
-
-    setDiagnostic(
-      'permissionStatus',
-      'GRANTED',
-      'good'
-    );
-
-
-    return true;
-
-
-  } catch (error) {
-
-    console.error(
-      'getUserMedia error',
-      error
-    );
-
-
-    const name =
-      error &&
-      error.name
-        ? error.name
-        : 'UnknownError';
-
-
-    if (
-      name ===
-      'NotAllowedError'
-    ) {
-
-      showError(
-        'MICROPHONE ACCESS IS BLOCKED BY THE PAGE POLICY.\n\n' +
-
-        'Chrome may show the microphone as Allowed, but Google Apps Script HTML Service is running this page inside a sandboxed iframe.\n\n' +
-
-        'This is NOT a normal microphone permission problem.\n\n' +
-
-        'The reliable fix is to move the microphone frontend outside Apps Script.'
-      );
-
-    } else {
-
-      showError(
-        'Microphone error: ' +
-        name +
-        '\n\n' +
-        (
-          error.message ||
-          ''
-        )
-      );
-
-    }
-
-
-    return false;
-
-  }
-
-}
-
-
-// ============================================================
-// INITIAL DATA
-// ============================================================
-
-async function loadInitialData() {
-
-  try {
-
-    const response =
-      await fetch(
-        API_ENDPOINT,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            action: 'getInitialData'
-          })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if (!response.ok || !data || data.success !== true) {
-
-      throw new Error(
-        data && data.error
-          ? data.error
-          : 'Could not load application data.'
-      );
-
-    }
-
-    initialData = data;
-
-    maxSuggestions =
-      Number(data.maxSuggestions) || 25;
-
-    suggestionSeconds =
-      Number(data.suggestInterval) || 10;
-
-    populateAgents(data.agents || []);
-
-    setupWhisperRecorder();
-
-    document.getElementById('loadStatus').textContent =
-      'Ready';
-
-  } catch (error) {
-
-    showError(
-      'Server error:\n\n' +
-      (error.message || error)
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// AGENTS
-// ============================================================
-
-function populateAgents(
-  agents
-) {
-
-  const select =
-    document.getElementById(
-      'agent'
-    );
-
-
-  select.innerHTML =
-    '<option value="">Select agent</option>';
-
-
-  agents.forEach(
-    function(agent) {
-
-      const option =
-        document.createElement(
-          'option'
-        );
-
-
-      option.value =
-        agent['Agent ID'] ||
-        '';
-
-
-      option.textContent =
-        (
-          agent['Name'] ||
-          'Unknown'
-        ) +
-        (
-          agent['Role']
-            ? ' — ' +
-              agent['Role']
-            : ''
-        );
-
-
-      option.dataset.name =
-        agent['Name'] ||
-        '';
-
-
-      select.appendChild(
-        option
-      );
-
-    }
-  );
-
-}
-
-
-// ============================================================
-// WHISPER RECORDER
-// ============================================================
-
-function setupWhisperRecorder() {
-  const supported = !!(
-    navigator.mediaDevices &&
-    navigator.mediaDevices.getUserMedia &&
-    window.MediaRecorder
-  );
-
-  recognitionSupported = supported;
-
-  setDiagnostic(
-    'speechStatus',
-    supported ? 'WHISPER READY' : 'NOT SUPPORTED',
-    supported ? 'good' : 'bad'
-  );
-}
-
-
-// ============================================================
-// TURN MANAGEMENT
-// ============================================================
-
-async function setSpeakerMode(mode) {
-  if (mode !== 'customer' && mode !== 'agent') return;
-
-  speakerMode = mode;
-  turnBuffer = '';
-  clearTimeout(turnTimer);
-
-  if (!isCalling) {
-    updateSpeakerUI();
-    return;
-  }
-
-  if (mode === 'customer') {
+async function setSpeakerMode(mode){
+  if(!isCalling)return;
+  if(mode==='customer'){
+    if(aiProcessing)return;
     await startCustomerRecording();
-    return;
-  }
-
-  stopCustomerRecording();
-  updateSpeakerUI();
-  setCopilotState('YOU ARE SPEAKING');
-}
-
-function updateSpeakerUI(stateOverride) {
-  const dot = document.getElementById('turnDot');
-  const label = document.getElementById('turnStateText');
-  const customerBtn = document.getElementById('customerTurnBtn');
-  const agentBtn = document.getElementById('agentTurnBtn');
-  const doneBtn = document.getElementById('customerDoneBtn');
-
-  const state = stateOverride || (
-    speakerMode === 'customer'
-      ? (isRecordingCustomer ? 'CUSTOMER SPEAKING' : 'CUSTOMER READY')
-      : 'YOU ARE SPEAKING'
-  );
-
-  if (dot) {
-    dot.className = 'turn-dot ' + (
-      stateOverride ? 'ai' : speakerMode
-    );
-  }
-
-  if (label) label.textContent = state;
-
-  if (customerBtn) {
-    customerBtn.classList.toggle(
-      'active',
-      !stateOverride && speakerMode === 'customer'
-    );
-  }
-
-  if (agentBtn) {
-    agentBtn.classList.toggle(
-      'active',
-      !stateOverride && speakerMode === 'agent'
-    );
-  }
-
-  if (doneBtn) {
-    doneBtn.disabled = !isRecordingCustomer;
+  }else if(mode==='agent'){
+    await stopCustomerRecording(false);
+    speakerMode='agent'; updateSpeakerUI('YOU ARE SPEAKING — AI PAUSED');
   }
 }
 
-
-// ============================================================
-// CUSTOMER RECORDING
-// ============================================================
-
-async function startCustomerRecording() {
-  if (!isCalling || isRecordingCustomer) return;
-
+async function startCustomerRecording(){
+  if(!isCalling||aiProcessing)return;
+  if(isRecordingCustomer)return;
   clearError();
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showError('Microphone API is unavailable.');
-    return;
-  }
-
-  try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    });
-
-    let mime = 'audio/webm;codecs=opus';
-    if (!MediaRecorder.isTypeSupported(mime)) {
-      mime = 'audio/webm';
-    }
-    if (!MediaRecorder.isTypeSupported(mime)) {
-      mime = '';
-    }
-
-    recordingMimeType = mime || 'audio/webm';
-
-    mediaRecorder = new MediaRecorder(
-      mediaStream,
-      mime ? { mimeType: mime } : undefined
-    );
-
-    const chunks = [];
-
-    mediaRecorder.ondataavailable = function(event) {
-      if (event.data && event.data.size > 0) {
-        chunks.push(event.data);
-      }
-    };
-
-    mediaRecorder.onerror = function(event) {
-      console.error('MediaRecorder error:', event);
-      setCopilotState('RECORDING ERROR');
-    };
-
-    mediaRecorder.onstop = async function() {
-      const blob = new Blob(chunks, {
-        type: recordingMimeType
-      });
-
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(function(track) {
-          track.stop();
-        });
-      }
-
-      mediaStream = null;
-      mediaRecorder = null;
-      isRecordingCustomer = false;
-      updateSpeakerUI('TRANSCRIBING CUSTOMER...');
-
-      if (blob.size > 0 && isCalling) {
-        await transcribeCustomerTurn(blob);
-      }
-    };
-
+  if(!mediaStream){const ok=await requestMicrophone();if(!ok)return;}
+  try{
+    setupRecorder();
+    isRecordingCustomer=true; speakerMode='customer';
+    document.getElementById('customerBtn').classList.add('active');
+    document.getElementById('agentBtn').classList.remove('active');
+    document.getElementById('finishBtn').disabled=false;
+    updateSpeakerUI('CUSTOMER SPEAKING');
+    document.getElementById('aiStatus').textContent='Listening...';
     mediaRecorder.start();
-    isRecordingCustomer = true;
-    updateSpeakerUI();
-    setCopilotState('CUSTOMER SPEAKING');
+  }catch(e){showError('Could not start recording:\n\n'+e.message);}
+}
 
-  } catch (error) {
-    console.error('Customer recorder error:', error);
-    isRecordingCustomer = false;
-
-    if (error && error.name === 'NotAllowedError') {
-      showError('Microphone permission is blocked. Allow microphone access in Chrome and try again.');
-    } else {
-      showError(
-        'Could not start customer recording: ' +
-        (error && error.message ? error.message : String(error))
-      );
-    }
-
-    updateSpeakerUI();
+async function stopCustomerRecording(transcribe=true){
+  if(!mediaRecorder||mediaRecorder.state==='inactive'){
+    isRecordingCustomer=false; return;
   }
+  isRecordingCustomer=false;
+  const shouldTranscribe=transcribe;
+  const original=mediaRecorder.onstop;
+  mediaRecorder.onstop=async function(){
+    const chunks=[]; // no-op; replaced below by recorder handler state
+  };
+  // Restore a one-shot recorder handler that has access to pending chunks.
+  const recorder=mediaRecorder;
+  const chunks=[];
+  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  recorder.onstop=async()=>{
+    const blob=new Blob(chunks,{type:recorder.mimeType||recordingMimeType||'audio/webm'});
+    if(shouldTranscribe&&isCalling){await transcribeCustomerTurn(blob);}
+  };
+  try{recorder.stop();}catch(e){}
+  document.getElementById('customerBtn').classList.remove('active');
+  document.getElementById('finishBtn').disabled=true;
 }
 
-function stopCustomerRecording() {
-  clearTimeout(turnTimer);
-
-  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-    isRecordingCustomer = false;
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(function(track) { track.stop(); });
-      mediaStream = null;
-    }
-    updateSpeakerUI();
-    return;
-  }
-
-  mediaRecorder.stop();
+async function finishCustomerTurn(){
+  if(!isCalling||!isRecordingCustomer)return;
+  document.getElementById('finishBtn').disabled=true;
+  await stopCustomerRecording(true);
 }
 
-function finishCustomerRecording() {
-  if (!isRecordingCustomer) return;
-  stopCustomerRecording();
+function finalReset(){
+  document.getElementById('transcript').innerHTML='<div class="empty">Waiting for the customer...</div>';
+  document.getElementById('suggestions').innerHTML='<div class="empty">AI suggestions will appear here.</div>';
+  document.getElementById('wordCount').textContent='0 words';
 }
+function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{const s=callStartedAt?Math.floor((Date.now()-callStartedAt)/1000):0;document.getElementById('timer').textContent=formatTime(s);},1000);}
+function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function updateSpeakerUI(state){document.getElementById('turnState').textContent=state;}
 
-
-// ============================================================
-// START CALL
-// ============================================================
-
-async function startCall() {
-  clearError();
-
-  const agent = document.getElementById('agent');
-  if (!agent.value) {
-    showError('Please select a sales agent.');
-    return;
-  }
-
-  const clientName = document.getElementById('clientName').value.trim();
-  if (!clientName) {
-    showError('Please enter client name.');
-    return;
-  }
-
-  const micOK = await testMicrophone();
-  if (!micOK) return;
-
-  isCalling = true;
-  callStartedAt = Date.now();
-  callId = 'CALL-' + Date.now().toString(36).toUpperCase();
-  finalTranscript = '';
-  interimTranscript = '';
-  suggestions = [];
-  suggestionCount = 0;
-  speakerMode = 'customer';
-  turnBuffer = '';
-  lastCustomerTurn = '';
-  aiProcessing = false;
-  isRecordingCustomer = false;
-
-  document.getElementById('statusDot').className = 'dot live';
-  document.getElementById('statusText').textContent = 'Call in progress';
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('endBtn').disabled = false;
-  document.getElementById('suggestions').innerHTML =
-    '<div class="empty">AI suggestions will appear here after the customer finishes a turn.</div>';
-
-  startTimer();
-  setCopilotState('READY FOR CUSTOMER');
-  await startCustomerRecording();
-}
-
-
-// ============================================================
-// TIMER
-// ============================================================
-
-function startTimer() {
-  clearInterval(timerInterval);
-
-  timerInterval = setInterval(function() {
-    const elapsed = Math.floor((Date.now() - callStartedAt) / 1000);
-    document.getElementById('timer').textContent = formatTime(elapsed);
-  }, 1000);
-}
-
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-
-  return (
-    String(minutes).padStart(2, '0') +
-    ':' +
-    String(secs).padStart(2, '0')
-  );
-}
-
-
-// ============================================================
-// TRANSCRIPT
-// ============================================================
-
-function appendTranscript(speaker, text) {
-  finalTranscript += speaker + ': ' + text + '\n';
+function appendTranscript(speaker,text){
+  conversation.push({speaker,text,at:new Date().toISOString()});
+  if(conversation.length>20)conversation.shift();
   renderTranscript();
 }
-
-function renderTranscript() {
-  const box = document.getElementById('transcript');
-  const text = finalTranscript + (interimTranscript ? '\n' + interimTranscript : '');
-
-  if (!text.trim()) {
-    box.innerHTML = '<div class="empty">Listening...</div>';
-    return;
-  }
-
-  box.innerHTML =
-    '<div class="line">' +
-    escapeHtml(text) +
-    '</div>';
-
-  box.scrollTop = box.scrollHeight;
-
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-  document.getElementById('wordCount').textContent = words + ' words';
+function renderTranscript(){
+  const box=document.getElementById('transcript');
+  if(!conversation.length){box.innerHTML='<div class="empty">Waiting for the customer...</div>';return;}
+  box.innerHTML=conversation.map(m=>'<div class="line '+(m.speaker==='Customer'?'customer':'agent')+'"><strong>'+escapeHtml(m.speaker)+':</strong> '+escapeHtml(m.text)+'</div>').join('');
+  box.scrollTop=box.scrollHeight;
+  const words=conversation.reduce((n,m)=>n+(m.text||'').split(/\s+/).filter(Boolean).length,0); document.getElementById('wordCount').textContent=words+' words';
 }
 
-
-// ============================================================
-// WHISPER TRANSCRIPTION
-// ============================================================
-
-async function transcribeCustomerTurn(audioBlob) {
-  if (!isCalling) return;
-
-  setCopilotState('WHISPER TRANSCRIBING...');
-  document.getElementById('aiStatus').textContent = 'Transcribing...';
-
-  try {
-    const response = await fetch('/api/transcribe', {
-      method: 'POST',
-      headers: {
-        'Content-Type': audioBlob.type || 'audio/webm'
-      },
-      body: audioBlob
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result || result.success !== true) {
-      throw new Error(
-        result && result.error
-          ? result.error
-          : 'Whisper transcription failed.'
-      );
-    }
-
-    const text = String(result.transcript || '').trim();
-
-    if (!text) {
-      document.getElementById('aiStatus').textContent = 'No speech detected';
-      await setSpeakerMode('customer');
-      return;
-    }
-
-    appendTranscript('Customer', text);
-
-    const normalized = text.toLowerCase().replace(/[.!?,\s]+$/g, '').trim();
-    const lowInfo = new Set([
-      'hi', 'hello', 'hey', 'ok', 'okay', 'yes', 'no',
-      'hmm', 'hm', 'right', 'fine', 'alright',
-      'good morning', 'good afternoon', 'good evening'
-    ]);
-
-    // Greetings/acknowledgements do not consume an AI call.
-    if (lowInfo.has(normalized)) {
-      document.getElementById('aiStatus').textContent = 'No coaching needed';
-      await setSpeakerMode('agent');
-      setCopilotState('YOU ARE SPEAKING');
-      return;
-    }
-
-    if (text === lastCustomerTurn) {
-      await setSpeakerMode('agent');
-      return;
-    }
-
-    lastCustomerTurn = text;
+async function transcribeCustomerTurn(audioBlob){
+  if(!isCalling)return;
+  updateSpeakerUI('WHISPER TRANSCRIBING'); document.getElementById('aiStatus').textContent='Transcribing...';
+  try{
+    const r=await fetch(TRANSCRIBE_ENDPOINT,{method:'POST',headers:{'Content-Type':audioBlob.type||'audio/webm'},body:audioBlob});
+    const result=await r.json(); if(!r.ok||!result.success)throw new Error(result.error||'Whisper transcription failed.');
+    const text=String(result.transcript||'').trim();
+    if(!text){document.getElementById('aiStatus').textContent='No speech detected';await setSpeakerMode('agent');return;}
+    appendTranscript('Customer',text);
+    const norm=text.toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+    const lowInfo=new Set(['hi','hello','hey','ok','okay','yes','no','hmm','hm','right','fine','alright','good morning','good afternoon','good evening']);
+    if(lowInfo.has(norm)){document.getElementById('aiStatus').textContent='No coaching needed';await setSpeakerMode('agent');return;}
+    if(text===lastCustomerTurn){await setSpeakerMode('agent');return;}
+    lastCustomerTurn=text;
     await requestSuggestionForCustomerTurn(text);
-
-  } catch (error) {
-    console.error('Whisper transcription error:', error);
-    document.getElementById('aiStatus').textContent = 'Whisper error';
-    setCopilotState('TRANSCRIPTION ERROR');
-    showError(
-      'Whisper transcription error:\n\n' +
-      (error && error.message ? error.message : String(error))
-    );
-  }
+  }catch(e){document.getElementById('aiStatus').textContent='Whisper error';updateSpeakerUI('TRANSCRIPTION ERROR');showError('Whisper transcription error:\n\n'+e.message);}
 }
 
-
-// ============================================================
-// AI — ONE SUGGESTION PER CUSTOMER TURN
-// ============================================================
-
-async function requestSuggestionForCustomerTurn(customerText) {
-  if (!isCalling || aiProcessing || !customerText) return;
-
-  aiProcessing = true;
-  updateSpeakerUI('AI ANALYZING');
-  document.getElementById('aiStatus').textContent = 'Thinking...';
-
-  const agent = document.getElementById('agent');
-  const selected = agent.options[agent.selectedIndex];
-
-  const params = {
-    agentId: agent.value,
-    agentName: selected && selected.dataset ? selected.dataset.name : '',
-    clientName: document.getElementById('clientName').value,
-    clientCompany: document.getElementById('clientCompany').value,
-    clientPhone: document.getElementById('clientPhone').value,
-    callType: 'Sales Call',
-    duration: callStartedAt
-      ? Math.floor((Date.now() - callStartedAt) / 1000)
-      : 0,
-    callId: callId,
-    transcript: customerText,
-    speaker: 'customer',
-    previousSuggestions: suggestions.slice(0, MAX_PREVIOUS_SUGGESTIONS)
-  };
-
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'getLiveSuggestion',
-        params: params
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result || result.success !== true) {
-      throw new Error(
-        result && result.error
-          ? result.error
-          : 'AI suggestion failed.'
-      );
-    }
-
-    const suggestion = result.suggestion;
-
-    if (
-      !suggestion ||
-      suggestion.should_suggest === false ||
-      !String(suggestion.immediate_suggestion || '').trim()
-    ) {
-      document.getElementById('aiStatus').textContent = 'No coaching needed';
-      await setSpeakerMode('agent');
-      setCopilotState('YOU ARE SPEAKING');
-      return;
-    }
-
-    suggestionCount += 1;
-    suggestions.unshift(suggestion.immediate_suggestion);
-    suggestions = suggestions.slice(0, MAX_PREVIOUS_SUGGESTIONS);
-
-    renderSuggestion(suggestion);
-    document.getElementById('aiStatus').textContent = 'Live ✓';
-
-    await setSpeakerMode('agent');
-    setCopilotState('YOU ARE SPEAKING');
-
-  } catch (error) {
-    console.error('AI suggestion error:', error);
-    document.getElementById('aiStatus').textContent = 'AI error';
-    setCopilotState('AI ERROR');
-    showError(
-      'AI suggestion error:\n\n' +
-      (error && error.message ? error.message : String(error))
-    );
-  } finally {
-    aiProcessing = false;
-  }
+async function requestSuggestionForCustomerTurn(customerText){
+  if(!isCalling||aiProcessing)return;
+  if(suggestionCount>=maxSuggestions){await setSpeakerMode('agent');return;}
+  aiProcessing=true; updateSpeakerUI('AI ANALYZING'); document.getElementById('aiStatus').textContent='Thinking...';
+  try{
+    const agent=document.getElementById('agent'); const option=agent.options[agent.selectedIndex];
+    const params={
+      callId:callId, agentId:agent.value, agentName:option?.dataset?.name||'',
+      clientName:document.getElementById('clientName').value.trim(), clientCompany:document.getElementById('clientCompany').value.trim(), clientPhone:document.getElementById('clientPhone').value.trim(),
+      callType:'Sales Call', duration:callStartedAt?Math.floor((Date.now()-callStartedAt)/1000):0,
+      transcript:customerText, speaker:'customer', previousSuggestions:suggestions.slice(0,3),
+      conversationContext:conversation.slice(-8).map(x=>x.speaker+': '+x.text).join('\n')
+    };
+    const r=await fetch(API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getLiveSuggestion',params})});
+    const result=await r.json(); if(!r.ok||!result.success)throw new Error(result.error||'AI suggestion failed.');
+    const suggestion=result.suggestion;
+    const text=String(suggestion?.immediate_suggestion||'').trim();
+    if(!suggestion||suggestion.should_suggest===false||!text){document.getElementById('aiStatus').textContent='No coaching needed';await setSpeakerMode('agent');return;}
+    if(suggestions.some(s=>s.toLowerCase()===text.toLowerCase())){document.getElementById('aiStatus').textContent='No new coaching';await setSpeakerMode('agent');return;}
+    suggestions.unshift(text); suggestions=suggestions.slice(0,3); suggestionCount++;
+    renderSuggestion(suggestion); document.getElementById('aiStatus').textContent='Live ✓'; await setSpeakerMode('agent');
+  }catch(e){document.getElementById('aiStatus').textContent='AI error';updateSpeakerUI('AI ERROR');showError('AI suggestion error:\n\n'+e.message);}
+  finally{aiProcessing=false;}
 }
 
-
-// ============================================================
-// SUGGESTION UI — SHOW ONE ACTIVE SUGGESTION
-// ============================================================
-
-function renderSuggestion(suggestion) {
-  const box = document.getElementById('suggestions');
-  box.innerHTML = '';
-
-  const div = document.createElement('div');
-  div.className = 'suggestion current';
-
-  const type = suggestion.suggestion_type || 'NEXT BEST ACTION';
-  const text = suggestion.immediate_suggestion || '';
-  const reason = suggestion.missed_point || suggestion.coaching_tip || '';
-  const phase = suggestion.sop_phase || '';
-  const priority = suggestion.priority || 'medium';
-
-  div.innerHTML =
-    '<div class="suggestion-type">' +
-    escapeHtml(type) +
-    '</div>' +
-    '<div class="suggestion-text">' +
-    escapeHtml(text) +
-    '</div>' +
-    (reason
-      ? '<div style="margin-top:8px;color:var(--muted);font-size:11px;line-height:1.5">' +
-        escapeHtml(reason) +
-        '</div>'
-      : '') +
-    (phase
-      ? '<div style="margin-top:8px;color:var(--blue);font-size:10px;font-weight:800">SOP: ' +
-        escapeHtml(phase) +
-        ' · Priority: ' +
-        escapeHtml(priority) +
-        '</div>'
-      : '');
-
-  box.appendChild(div);
+function renderSuggestion(s){
+  const box=document.getElementById('suggestions');
+  const type=s.suggestion_type||'NEXT BEST ACTION', text=s.immediate_suggestion||'', reason=s.missed_point||s.coaching_tip||'', phase=s.sop_phase||'', priority=s.priority||'medium';
+  box.innerHTML='<div class="suggestion current"><div class="suggestion-type">'+escapeHtml(type)+'</div><div class="suggestion-text">'+escapeHtml(text)+'</div>'+(reason?'<div style="margin-top:8px;color:var(--muted);font-size:11px;line-height:1.5">'+escapeHtml(reason)+'</div>':'')+(phase?'<div style="margin-top:8px;color:var(--blue);font-size:10px;font-weight:800">SOP: '+escapeHtml(phase)+' · Priority: '+escapeHtml(priority)+'</div>':'')+'</div>';
 }
 
-
-// ============================================================
-// HELPER
-// ============================================================
-
-function setCopilotState(state) {
-  updateSpeakerUI(state);
+async function endCall(){
+  if(!isCalling)return;
+  const endedAt=Date.now(); const duration=callStartedAt?Math.floor((endedAt-callStartedAt)/1000):0;
+  await stopCustomerRecording(false); if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
+  isCalling=false; aiProcessing=false; clearInterval(timerInterval);
+  document.getElementById('statusDot').className='dot ready'; document.getElementById('statusText').textContent='Saving call...';
+  document.getElementById('endBtn').disabled=true; document.getElementById('startBtn').disabled=true; ['customerBtn','finishBtn','agentBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  updateSpeakerUI('SAVING CALL');
+  try{
+    const params={callId,agentId:document.getElementById('agent').value,agentName:selectedAgentName(),clientName:document.getElementById('clientName').value.trim(),clientCompany:document.getElementById('clientCompany').value.trim(),clientPhone:document.getElementById('clientPhone').value.trim(),duration,startTime:new Date(callStartedAt).toISOString(),endTime:new Date(endedAt).toISOString(),transcript:conversation.map(x=>x.speaker+': '+x.text).join('\n'),callType:'Sales Call'};
+    const r=await fetch(API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'endCall',params})});
+    const result=await r.json(); if(!r.ok||!result.success)throw new Error(result.error||'Could not save call.');
+    document.getElementById('statusText').textContent='Call saved ✓'; document.getElementById('aiStatus').textContent=result.analysisSuccess?'Analysis saved ✓':'Call saved'; updateSpeakerUI('CALL SAVED');
+  }catch(e){document.getElementById('statusText').textContent='Save error';updateSpeakerUI('SAVE ERROR');showError('Could not save the call:\n\n'+e.message);}
+  finally{document.getElementById('startBtn').disabled=false;}
 }
-
-
-// ============================================================
-// END CALL
-// ============================================================
-
-async function endCall() {
-  if (!isCalling) return;
-
-  const endedAt = Date.now();
-  const duration = callStartedAt
-    ? Math.floor((endedAt - callStartedAt) / 1000)
-    : 0;
-
-  // Stop customer recording without trying to transcribe an unfinished turn.
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    try { mediaRecorder.onstop = null; } catch (e) {}
-    try { mediaRecorder.stop(); } catch (e) {}
-  }
-
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(function(track) { track.stop(); });
-    mediaStream = null;
-  }
-
-  isRecordingCustomer = false;
-  isCalling = false;
-  clearInterval(timerInterval);
-  clearTimeout(turnTimer);
-
-  document.getElementById('statusDot').className = 'dot ready';
-  document.getElementById('statusText').textContent = 'Saving call...';
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('endBtn').disabled = true;
-  document.getElementById('customerDoneBtn').disabled = true;
-  setCopilotState('SAVING CALL');
-
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'endCall',
-        params: {
-          callId: callId,
-          agentId: document.getElementById('agent').value,
-          agentName: getSelectedAgentName(),
-          clientName: document.getElementById('clientName').value,
-          clientCompany: document.getElementById('clientCompany').value,
-          clientPhone: document.getElementById('clientPhone').value,
-          callType: 'Sales Call',
-          duration: duration,
-          startTime: callStartedAt ? new Date(callStartedAt).toISOString() : '',
-          endTime: new Date(endedAt).toISOString(),
-          transcript: finalTranscript,
-          conversion: 'No'
-        }
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result || result.success !== true) {
-      throw new Error(
-        result && result.error
-          ? result.error
-          : 'Could not save the call.'
-      );
-    }
-
-    document.getElementById('statusText').textContent = 'Call saved ✓';
-    document.getElementById('aiStatus').textContent =
-      result.analysisSuccess ? 'Analysis saved ✓' : 'Call saved';
-    setCopilotState('CALL SAVED');
-
-  } catch (error) {
-    console.error('End call save error:', error);
-    document.getElementById('statusText').textContent = 'Save error';
-    setCopilotState('SAVE ERROR');
-    showError(
-      'Could not save the call:\n\n' +
-      (error && error.message ? error.message : String(error))
-    );
-
-  } finally {
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('endBtn').disabled = true;
-  }
-}
-
-function getSelectedAgentName() {
-  const select = document.getElementById('agent');
-  const option = select.options[select.selectedIndex];
-  return option && option.dataset ? (option.dataset.name || '') : '';
-}
-
 </script>
-
-
 </body>
-
 </html>

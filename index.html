@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mentor Group — Live Sales Call Copilot V6</title>
+<title>Mentor Group — Live Sales Call Copilot V4 Interactive</title>
 <style>
 :root{--bg:#050912;--panel:#0b1220;--panel2:#101a2b;--border:rgba(255,255,255,.08);--text:#e8edf5;--muted:#8190a8;--aqua:#00d4aa;--green:#20d17a;--gold:#f5c518;--blue:#4d9fff;--red:#ff5570;--orange:#ff9f43}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top right,rgba(0,212,170,.07),transparent 30%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}.nav{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(7,13,24,.97);position:sticky;top:0;z-index:10}.brand{display:flex;align-items:center;gap:11px}.logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00d4aa,#008a78);color:#00110d}.brand-title{font-size:15px;font-weight:800}.brand-sub{color:var(--muted);font-size:10px;margin-top:3px}.nav-actions{display:flex;gap:8px}.btn{border:1px solid var(--border);background:rgba(255,255,255,.035);color:var(--text);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:12px;font-weight:700}.btn:hover{background:rgba(255,255,255,.07)}.btn-primary{background:var(--aqua);color:#00110d;border-color:var(--aqua)}.btn-danger{background:rgba(255,85,112,.12);color:var(--red);border-color:rgba(255,85,112,.25)}.btn:disabled{opacity:.45;cursor:not-allowed}
@@ -22,7 +22,7 @@
 </head>
 <body>
 <nav class="nav">
-  <div class="brand"><div class="logo">🎯</div><div><div class="brand-title">Mentor Group</div><div class="brand-sub">Live Sales Call Copilot V6</div></div></div>
+  <div class="brand"><div class="logo">🎯</div><div><div class="brand-title">Mentor Group</div><div class="brand-sub">Live Sales Call Copilot V4 Interactive</div></div></div>
   <div class="nav-actions"><button class="btn" onclick="openDashboard()">← Dashboard</button></div>
 </nav>
 
@@ -38,13 +38,13 @@
         <div class="field"><label>Client Phone</label><input id="clientPhone" placeholder="+91..."></div>
         <div class="status"><div id="statusDot" class="dot ready"></div><span id="statusText">Ready</span></div>
         <div id="timer" class="timer">00:00</div>
-        <div class="buttons"><button id="startBtn" type="button" class="btn btn-primary" onclick="startCall()">▶ Start Call</button><button id="endBtn" type="button" class="btn btn-danger" onclick="endCall()" disabled>■ End</button></div><div style="margin-top:8px"><button id="retryMicBtn" type="button" class="mini-btn" onclick="retryMicrophone()" style="display:none;width:100%">🎤 Retry Microphone</button></div>
+        <div class="buttons"><button id="startBtn" class="btn btn-primary" onclick="startCall()">▶ Start Call</button><button id="endBtn" class="btn btn-danger" onclick="endCall()" disabled>■ End</button></div>
         <div class="diagnostic">
           <div class="diagnostic-title">LIVE AUDIO / TRANSCRIPTION</div>
           <div class="diag-row"><span>HTTPS / Secure Context</span><span id="secureStatus">Checking…</span></div>
           <div class="diag-row"><span>Microphone</span><span id="mediaStatus">Checking…</span></div>
           <div class="diag-row"><span>Permission</span><span id="permissionStatus">Checking…</span></div>
-          <div class="diag-row"><span>Turn Engine</span><span id="speechStatus">Checking…</span></div><div class="diag-row"><span>App Version</span><span class="good">V6</span></div>
+          <div class="diag-row"><span>Turn Engine</span><span id="speechStatus">Checking…</span></div>
           <div class="diag-row"><span>Languages</span><span id="languageStatus">en + hi</span></div>
         </div>
         <p class="small" style="margin-top:14px">V4 records one speaker turn at a time. After every CLIENT turn, the full annotated transcript is sent to the sales AI for one ready-to-say sales statement. The line uses the client intent, current SOP stage, and an ethical persuasion tactic.</p>
@@ -197,102 +197,14 @@ function populateAgents(agents){
 }
 function selectedAgentName(){const s=document.getElementById('agent');const o=s.options[s.selectedIndex];return o?.dataset?.name||'';}
 
-function requestMic(timeoutMs=10000){
-  clearError();
-
-  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
-    showError('This browser cannot record audio. Use the latest Chrome or Edge on HTTPS.');
-    setDiag('mediaStatus','NOT SUPPORTED','bad');
-    return Promise.resolve(false);
-  }
-
-  if(mediaStream && mediaStream.active){
-    setDiag('mediaStatus','WORKING','good');
-    setDiag('permissionStatus','GRANTED','good');
-    return Promise.resolve(true);
-  }
-
-  return new Promise((resolve)=>{
-    let settled=false;
-    let timeoutHandle=null;
-
-    const finish=(ok)=>{
-      if(settled)return;
-      settled=true;
-      if(timeoutHandle)clearTimeout(timeoutHandle);
-      resolve(ok);
-    };
-
-    setDiag('mediaStatus','REQUESTING…','warn');
-    setDiag('permissionStatus','PROMPTING…','warn');
-
-    let gumPromise;
-    try{
-      // IMPORTANT: call getUserMedia directly from the Start Call
-      // execution chain. We do not wrap it in another async task.
-      gumPromise=navigator.mediaDevices.getUserMedia({
-        audio:{
-          echoCancellation:true,
-          noiseSuppression:true,
-          autoGainControl:true,
-          channelCount:1
-        }
-      });
-    }catch(error){
-      setDiag('mediaStatus','ERROR','bad');
-      setDiag('permissionStatus','DENIED','bad');
-      showError('Microphone request could not start:\n\n'+(error.message||error.name));
-      finish(false);
-      return;
-    }
-
-    timeoutHandle=setTimeout(()=>{
-      // Do NOT stop the call here. The timer must continue.
-      setDiag('mediaStatus','TIMEOUT','bad');
-      setDiag('permissionStatus','CHECK CHROME','bad');
-      showError('Chrome did not complete the microphone request within '+Math.round(timeoutMs/1000)+' seconds.\n\nThe call timer is still running. Check the microphone icon in the address bar and click Retry Microphone.');
-      finish(false);
-    },timeoutMs);
-
-    gumPromise.then(async(stream)=>{
-      if(!isCalling){
-        stream.getTracks().forEach(t=>t.stop());
-        finish(false);
-        return;
-      }
-
-      mediaStream=stream;
-      setDiag('mediaStatus','WORKING','good');
-      setDiag('permissionStatus','GRANTED','good');
-
-      currentMimeType=(
-        ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus']
-          .find(t=>MediaRecorder.isTypeSupported(t)) || 'audio/webm'
-      );
-
-      initAnalyser();
-      if(audioContext?.state==='suspended'){
-        try{await audioContext.resume();}catch(e){}
-      }
-
-      // If the timeout already returned false but Chrome grants access
-      // later, automatically recover without requiring a page refresh.
-      if(!settled && isCalling){
-        finish(true);
-      }else if(settled && isCalling && !mediaRecorder && currentSpeaker==='idle'){
-        currentSpeaker='customer';
-        updateTurnUI();
-        try{await startTurn();}catch(e){console.error('Late microphone recovery failed',e);}
-      }
-
-    }).catch(error=>{
-      console.error('getUserMedia failed:',error);
-      setDiag('mediaStatus','ERROR','bad');
-      setDiag('permissionStatus','DENIED','bad');
-      showError('Microphone access failed:\n\n'+(error.message||error.name)+'\n\nAllow microphone access for this Vercel site in Chrome, then click Retry Microphone.');
-      finish(false);
-    });
-  });
+async function requestMic(){
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showError('This browser cannot record audio. Use current Chrome or Edge on HTTPS.');return false;}
+  try{
+    mediaStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}});
+    setDiag('mediaStatus','WORKING','good');setDiag('permissionStatus','GRANTED','good');
+    currentMimeType=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'].find(t=>MediaRecorder.isTypeSupported(t))||'audio/webm';
+    initAnalyser(); return true;
+  }catch(e){showError('Microphone access failed:\n\n'+(e.message||e.name));return false;}
 }
 
 function initAnalyser(){
@@ -304,191 +216,20 @@ function initAnalyser(){
   }catch(e){audioContext=null;analyser=null;}
 }
 
-function startCall(){
-  try{
-    clearError();
-    if(isCalling) return;
-
-    const agentEl=document.getElementById('agent');
-    const clientNameEl=document.getElementById('clientName');
-
-    if(!agentEl || !agentEl.value){
-      showError('Please select a sales agent.');
-      if(agentEl) agentEl.focus();
-      return;
-    }
-
-    if(!clientNameEl || !clientNameEl.value.trim()){
-      showError('Please enter client name.');
-      if(clientNameEl) clientNameEl.focus();
-      return;
-    }
-
-    // ----------------------------------------------------------
-    // START THE CALL CLOCK FIRST. Nothing asynchronous is allowed
-    // to run before this point.
-    // ----------------------------------------------------------
-    isCalling=true;
-    callStartedAt=Date.now();
-    callId='CALL-'+(
-      (window.crypto && typeof window.crypto.randomUUID==='function')
-        ? window.crypto.randomUUID().slice(0,8)
-        : Math.random().toString(36).slice(2,10)
-    ).toUpperCase();
-
-    conversation=[];
-    suggestions=[];
-    suggestionCount=0;
-    latestCustomerTurn='';
-    aiProcessing=false;
-    currentSpeaker='customer';
-    stopInProgress=false;
-
-    // Update the UI immediately, before any microphone work.
-    const startBtn=document.getElementById('startBtn');
-    const endBtn=document.getElementById('endBtn');
-    const retryBtn=document.getElementById('retryMicBtn');
-    const statusDot=document.getElementById('statusDot');
-    const statusText=document.getElementById('statusText');
-    const turnHint=document.getElementById('turnHint');
-    const aiStatus=document.getElementById('aiStatus');
-
-    if(startBtn) startBtn.disabled=true;
-    if(endBtn) endBtn.disabled=false;
-    if(retryBtn) retryBtn.style.display='none';
-    ['customerBtn','finishBtn','agentBtn'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.disabled=false;
-    });
-
-    if(statusDot) statusDot.className='dot live';
-    if(statusText) statusText.textContent='Call in progress';
-    if(turnHint) turnHint.textContent='Timer is running. Initializing microphone…';
-    if(aiStatus) aiStatus.textContent='Waiting for client…';
-
-    renderTranscript();
-    renderSuggestion(null);
-    updateTurnState('STARTING CALL…');
-
-    // CRITICAL: this is a synchronous timer kickoff.
-    startTimer();
-    updateTimer();
-
-    // Audio initialization is intentionally detached from the timer.
-    Promise.resolve()
-      .then(()=>initializeCallAudio())
-      .catch(error=>{
-        console.error('Call audio initialization error:',error);
-        if(isCalling){
-          showError('Call started, but microphone initialization failed: '+(error?.message||error));
-        }
-      });
-
-  }catch(error){
-    console.error('startCall error:',error);
-    if(isCalling){
-      // Preserve the active call clock if the UI has already entered
-      // the call state.
-      startTimer();
-    }else{
-      showError('Could not start the call: '+(error?.message||error));
-    }
-  }
-}
-
-async function initializeCallAudio(){
-  const micOk=await requestMic(10000);
-
-  if(!isCalling) return;
-
-  if(!micOk){
-    // IMPORTANT: keep the call alive so the timer continues.
-    // The user can retry microphone permission without losing the call.
-    currentSpeaker='idle';
-    updateTurnUI();
-    updateTurnState('MICROPHONE NOT READY');
-    document.getElementById('turnHint').textContent='Allow microphone access, then click Retry Microphone.';
-    document.getElementById('statusText').textContent='Call in progress · microphone unavailable';
-    document.getElementById('retryMicBtn').style.display='block';
-    return;
-  }
-
-  if(!isCalling) return;
-
-  document.getElementById('retryMicBtn').style.display='none';
-  document.getElementById('statusText').textContent='Call in progress';
-  document.getElementById('turnHint').textContent='Client turn is active. Speak normally; silence will end the turn.';
-  currentSpeaker='customer';
-  updateTurnUI();
-
-  try{
-    await startTurn();
-  }catch(e){
-    console.error('startTurn after microphone init failed:',e);
-    updateTurnState('RECORDER ERROR');
-    showError('Microphone is available, but the recorder could not start. '+(e.message||e.name));
-  }
-}
-
-async function retryMicrophone(){
-  if(!isCalling) return;
+async function startCall(){
   clearError();
-  document.getElementById('retryMicBtn').style.display='none';
-  document.getElementById('turnHint').textContent='Requesting microphone permission…';
-  updateTurnState('REQUESTING MICROPHONE…');
-  const ok=await requestMic(10000);
-  if(!isCalling) return;
-  if(!ok){
-    document.getElementById('retryMicBtn').style.display='block';
-    updateTurnState('MICROPHONE NOT READY');
-    document.getElementById('turnHint').textContent='Microphone is still unavailable. Check Chrome site permissions.';
-    return;
-  }
-  currentSpeaker='customer';
-  document.getElementById('statusText').textContent='Call in progress';
-  document.getElementById('turnHint').textContent='Client turn is active.';
-  updateTurnUI();
-  await startTurn();
+  if(!document.getElementById('agent').value){showError('Please select a sales agent.');return;}
+  if(!document.getElementById('clientName').value.trim()){showError('Please enter client name.');return;}
+  if(!(await requestMic()))return;
+
+  isCalling=true; callStartedAt=Date.now(); callId='CALL-'+crypto.randomUUID().slice(0,8).toUpperCase(); conversation=[];suggestions=[];suggestionCount=0;latestCustomerTurn='';aiProcessing=false;
+  renderTranscript();renderSuggestion(null);startTimer();
+  document.getElementById('startBtn').disabled=true;document.getElementById('endBtn').disabled=false;['customerBtn','finishBtn','agentBtn'].forEach(id=>document.getElementById(id).disabled=false);
+  document.getElementById('statusDot').className='dot live';document.getElementById('statusText').textContent='Call in progress';
+  await setSpeakerMode('customer');
 }
 
-function updateTimer(){
-  if(!callStartedAt) return;
-
-  const el=document.getElementById('timer');
-  if(!el) return;
-
-  const seconds=Math.max(0,Math.floor((Date.now()-callStartedAt)/1000));
-  el.textContent=fmt(seconds);
-}
-
-function startTimer(){
-  clearInterval(timerInterval);
-
-  // Paint immediately.
-  updateTimer();
-
-  // Use a recursive timeout instead of relying on one long-running
-  // interval. The elapsed time always comes from Date.now(), so even
-  // if the browser throttles a callback the displayed time catches up.
-  const tick=()=>{
-    if(!isCalling || !callStartedAt){
-      timerInterval=null;
-      return;
-    }
-
-    updateTimer();
-    timerInterval=setTimeout(tick,250);
-  };
-
-  timerInterval=setTimeout(tick,250);
-}
-
-async function abortCallStart(){
-  // Kept for compatibility with older deployments.
-  // V6 never calls this during normal microphone failure because
-  // a failed permission request must not cancel an active call timer.
-}
-
+function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-callStartedAt)/1000);document.getElementById('timer').textContent=fmt(s);},1000);}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 
 async function setSpeakerMode(mode){
@@ -504,44 +245,21 @@ async function setSpeakerMode(mode){
 }
 
 async function startTurn(){
-  if(!isCalling||!mediaStream||mediaRecorder)return;
-  stopInProgress=false;
-  mediaChunks=[];
-  speechDetected=false;
-  lastSpeechAt=Date.now();
-  turnStartedAt=Date.now();
+  if(!isCalling||!mediaStream)return;
+  stopInProgress=false;mediaChunks=[];speechDetected=false;lastSpeechAt=Date.now();turnStartedAt=Date.now();
   const speakerAtStart=currentSpeaker;
   try{
     mediaRecorder=new MediaRecorder(mediaStream,{mimeType:currentMimeType});
-  }catch(e){
-    try{mediaRecorder=new MediaRecorder(mediaStream);}catch(err){
-      mediaRecorder=null;
-      showError('Could not start the audio recorder: '+(err.message||err.name));
-      updateTurnState('RECORDER ERROR');
-      return;
-    }
-  }
+  }catch(e){mediaRecorder=new MediaRecorder(mediaStream);}
   const recorder=mediaRecorder;
   recorder.ondataavailable=e=>{if(e.data?.size)mediaChunks.push(e.data);};
-  recorder.onerror=e=>{console.error('MediaRecorder error',e);showError('Audio recorder error.');};
   recorder.onstop=async()=>{
     const blob=new Blob(mediaChunks,{type:recorder.mimeType||currentMimeType});
     mediaRecorder=null;
     clearInterval(monitorTimer);monitorTimer=null;
     if(isCalling && blob.size>=500){await handleTurnAudio(blob,speakerAtStart);}
-    else if(isCalling){
-      stopInProgress=false;
-      await moveToNextSpeaker(speakerAtStart);
-    }
   };
-  try{
-    recorder.start(250);
-  }catch(e){
-    mediaRecorder=null;
-    showError('Could not start recording: '+(e.message||e.name));
-    updateTurnState('RECORDER ERROR');
-    return;
-  }
+  recorder.start(250);
   monitorTimer=setInterval(checkSpeech,100);
 }
 
@@ -768,7 +486,7 @@ async function endCall(){
   clearError();
   const endedAt=Date.now();
   if(mediaRecorder){stopInProgress=true;await stopTurn(false, currentSpeaker);}
-  clearTimeout(timerInterval);clearInterval(monitorTimer);
+  clearInterval(timerInterval);clearInterval(monitorTimer);
   if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
   if(audioContext){try{await audioContext.close();}catch(e){}audioContext=null;}
   isCalling=false;
@@ -781,17 +499,6 @@ async function endCall(){
   }catch(e){document.getElementById('statusText').textContent='Save error';updateTurnState('SAVE ERROR');showError('Could not save the call:\n\n'+e.message);}
   finally{document.getElementById('startBtn').disabled=false;}
 }
-window.addEventListener('error',function(e){
-  console.error('V6 window error:',e.error||e.message);
-  const box=document.getElementById('errorBox');
-  if(box&&e.message){box.textContent='Application error: '+e.message;box.style.display='block';}
-});
-window.addEventListener('unhandledrejection',function(e){
-  console.error('V6 unhandled rejection:',e.reason);
-  const box=document.getElementById('errorBox');
-  if(box){box.textContent='Unhandled application error: '+(e.reason?.message||e.reason||'Unknown error');box.style.display='block';}
-});
-
 </script>
 </body>
 </html>

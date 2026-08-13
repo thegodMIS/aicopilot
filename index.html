@@ -197,14 +197,34 @@ function populateAgents(agents){
 }
 function selectedAgentName(){const s=document.getElementById('agent');const o=s.options[s.selectedIndex];return o?.dataset?.name||'';}
 
-async function requestMic(){
-  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){showError('This browser cannot record audio. Use current Chrome or Edge on HTTPS.');return false;}
+async function requestMic(timeoutMs=8000){
+  clearError();
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
+    showError('This browser cannot record audio. Use current Chrome or Edge on HTTPS.');
+    return false;
+  }
+  if(mediaStream && mediaStream.active) {
+    setDiag('mediaStatus','WORKING','good');
+    setDiag('permissionStatus','GRANTED','good');
+    return true;
+  }
   try{
-    mediaStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}});
-    setDiag('mediaStatus','WORKING','good');setDiag('permissionStatus','GRANTED','good');
+    const gum=navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true,channelCount:1}});
+    const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Microphone request timed out. Check Chrome microphone permission for this site.')),timeoutMs));
+    mediaStream=await Promise.race([gum,timeout]);
+    setDiag('mediaStatus','WORKING','good');
+    setDiag('permissionStatus','GRANTED','good');
     currentMimeType=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'].find(t=>MediaRecorder.isTypeSupported(t))||'audio/webm';
-    initAnalyser(); return true;
-  }catch(e){showError('Microphone access failed:\n\n'+(e.message||e.name));return false;}
+    initAnalyser();
+    if(audioContext && audioContext.state==='suspended'){ try{await audioContext.resume();}catch(e){} }
+    return true;
+  }catch(e){
+    console.error('requestMic failed',e);
+    setDiag('mediaStatus','ERROR','bad');
+    setDiag('permissionStatus','DENIED / CHECK SITE SETTINGS','bad');
+    showError('Microphone access failed:\n\n'+(e.message||e.name)+'\n\nAllow microphone access in Chrome site settings, then click Start Call again.');
+    return false;
+  }
 }
 
 function initAnalyser(){
@@ -218,18 +238,81 @@ function initAnalyser(){
 
 async function startCall(){
   clearError();
-  if(!document.getElementById('agent').value){showError('Please select a sales agent.');return;}
-  if(!document.getElementById('clientName').value.trim()){showError('Please enter client name.');return;}
-  if(!(await requestMic()))return;
+  if(isCalling) return;
+  const agentEl=document.getElementById('agent');
+  const clientNameEl=document.getElementById('clientName');
+  if(!agentEl.value){showError('Please select a sales agent.');return;}
+  if(!clientNameEl.value.trim()){showError('Please enter client name.');return;}
 
-  isCalling=true; callStartedAt=Date.now(); callId='CALL-'+crypto.randomUUID().slice(0,8).toUpperCase(); conversation=[];suggestions=[];suggestionCount=0;latestCustomerTurn='';aiProcessing=false;
-  renderTranscript();renderSuggestion(null);startTimer();
-  document.getElementById('startBtn').disabled=true;document.getElementById('endBtn').disabled=false;['customerBtn','finishBtn','agentBtn'].forEach(id=>document.getElementById(id).disabled=false);
-  document.getElementById('statusDot').className='dot live';document.getElementById('statusText').textContent='Call in progress';
-  await setSpeakerMode('customer');
+  // Start the call UI and timer FIRST. A slow or blocked microphone permission
+  // request must never make the call button appear unresponsive.
+  isCalling=true;
+  callStartedAt=Date.now();
+  callId='CALL-'+((window.crypto&&crypto.randomUUID)?crypto.randomUUID().slice(0,8):Math.random().toString(36).slice(2,10)).toUpperCase();
+  conversation=[];
+  suggestions=[];
+  suggestionCount=0;
+  latestCustomerTurn='';
+  aiProcessing=false;
+  currentSpeaker='idle';
+  stopInProgress=false;
+
+  renderTranscript();
+  renderSuggestion(null);
+  startTimer();
+
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('endBtn').disabled=false;
+  ['customerBtn','finishBtn','agentBtn'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=false;});
+  document.getElementById('statusDot').className='dot live';
+  document.getElementById('statusText').textContent='Call starting…';
+  updateTurnState('REQUESTING MICROPHONE…');
+  document.getElementById('aiStatus').textContent='Waiting for client…';
+
+  const micOk=await requestMic(8000);
+  if(!micOk){
+    await abortCallStart();
+    return;
+  }
+
+  updateTurnState('CLIENT SPEAKING');
+  document.getElementById('statusText').textContent='Call in progress';
+  currentSpeaker='customer';
+  updateTurnUI();
+  await startTurn();
 }
 
-function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-callStartedAt)/1000);document.getElementById('timer').textContent=fmt(s);},1000);}
+function updateTimer(){
+  const seconds=callStartedAt?Math.max(0,Math.floor((Date.now()-callStartedAt)/1000)):0;
+  document.getElementById('timer').textContent=fmt(seconds);
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  updateTimer();
+  timerInterval=setInterval(updateTimer,1000);
+}
+
+async function abortCallStart(){
+  clearInterval(timerInterval);
+  timerInterval=null;
+  clearInterval(monitorTimer);
+  monitorTimer=null;
+  if(mediaRecorder){try{mediaRecorder.stop();}catch(e){}mediaRecorder=null;}
+  if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
+  if(audioContext){try{await audioContext.close();}catch(e){}audioContext=null;}
+  analyser=null;audioSource=null;audioData=null;
+  isCalling=false;
+  currentSpeaker='idle';
+  stopInProgress=false;
+  document.getElementById('timer').textContent='00:00';
+  document.getElementById('statusDot').className='dot ready';
+  document.getElementById('statusText').textContent='Ready';
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('endBtn').disabled=true;
+  ['customerBtn','finishBtn','agentBtn'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});
+  updateTurnState('IDLE');
+}
 function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 
 async function setSpeakerMode(mode){
@@ -245,21 +328,44 @@ async function setSpeakerMode(mode){
 }
 
 async function startTurn(){
-  if(!isCalling||!mediaStream)return;
-  stopInProgress=false;mediaChunks=[];speechDetected=false;lastSpeechAt=Date.now();turnStartedAt=Date.now();
+  if(!isCalling||!mediaStream||mediaRecorder)return;
+  stopInProgress=false;
+  mediaChunks=[];
+  speechDetected=false;
+  lastSpeechAt=Date.now();
+  turnStartedAt=Date.now();
   const speakerAtStart=currentSpeaker;
   try{
     mediaRecorder=new MediaRecorder(mediaStream,{mimeType:currentMimeType});
-  }catch(e){mediaRecorder=new MediaRecorder(mediaStream);}
+  }catch(e){
+    try{mediaRecorder=new MediaRecorder(mediaStream);}catch(err){
+      mediaRecorder=null;
+      showError('Could not start the audio recorder: '+(err.message||err.name));
+      updateTurnState('RECORDER ERROR');
+      return;
+    }
+  }
   const recorder=mediaRecorder;
   recorder.ondataavailable=e=>{if(e.data?.size)mediaChunks.push(e.data);};
+  recorder.onerror=e=>{console.error('MediaRecorder error',e);showError('Audio recorder error.');};
   recorder.onstop=async()=>{
     const blob=new Blob(mediaChunks,{type:recorder.mimeType||currentMimeType});
     mediaRecorder=null;
     clearInterval(monitorTimer);monitorTimer=null;
     if(isCalling && blob.size>=500){await handleTurnAudio(blob,speakerAtStart);}
+    else if(isCalling){
+      stopInProgress=false;
+      await moveToNextSpeaker(speakerAtStart);
+    }
   };
-  recorder.start(250);
+  try{
+    recorder.start(250);
+  }catch(e){
+    mediaRecorder=null;
+    showError('Could not start recording: '+(e.message||e.name));
+    updateTurnState('RECORDER ERROR');
+    return;
+  }
   monitorTimer=setInterval(checkSpeech,100);
 }
 

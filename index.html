@@ -218,15 +218,80 @@ function initAnalyser(){
 
 async function startCall(){
   clearError();
-  if(!document.getElementById('agent').value){showError('Please select a sales agent.');return;}
-  if(!document.getElementById('clientName').value.trim()){showError('Please enter client name.');return;}
-  if(!(await requestMic()))return;
 
-  isCalling=true; callStartedAt=Date.now(); callId='CALL-'+crypto.randomUUID().slice(0,8).toUpperCase(); conversation=[];suggestions=[];suggestionCount=0;latestCustomerTurn='';aiProcessing=false;
-  renderTranscript();renderSuggestion(null);startTimer();
-  document.getElementById('startBtn').disabled=true;document.getElementById('endBtn').disabled=false;['customerBtn','finishBtn','agentBtn'].forEach(id=>document.getElementById(id).disabled=false);
-  document.getElementById('statusDot').className='dot live';document.getElementById('statusText').textContent='Call in progress';
-  await setSpeakerMode('customer');
+  const agentEl=document.getElementById('agent');
+  const clientNameEl=document.getElementById('clientName');
+
+  if(!agentEl || !agentEl.value){
+    showError('Please select a sales agent.');
+    agentEl?.focus();
+    return;
+  }
+
+  if(!clientNameEl || !clientNameEl.value.trim()){
+    showError('Please enter client name.');
+    clientNameEl?.focus();
+    return;
+  }
+
+  // V4 BASELINE: microphone permission is requested first.
+  // Once getUserMedia resolves (your browser already shows GRANTED),
+  // the call state, timer and first customer turn are started together.
+  const micOK=await requestMic();
+
+  if(!micOK){
+    return;
+  }
+
+  try{
+    isCalling=true;
+    callStartedAt=Date.now();
+    callId='CALL-'+(window.crypto?.randomUUID ? window.crypto.randomUUID().slice(0,8) : Math.random().toString(36).slice(2,10)).toUpperCase();
+
+    conversation=[];
+    suggestions=[];
+    suggestionCount=0;
+    latestCustomerTurn='';
+    aiProcessing=false;
+    currentSpeaker='customer';
+    stopInProgress=false;
+
+    renderTranscript();
+    renderSuggestion(null);
+
+    const startBtn=document.getElementById('startBtn');
+    const endBtn=document.getElementById('endBtn');
+    if(startBtn) startBtn.disabled=true;
+    if(endBtn) endBtn.disabled=false;
+
+    ['customerBtn','finishBtn','agentBtn'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.disabled=false;
+    });
+
+    const statusDot=document.getElementById('statusDot');
+    const statusText=document.getElementById('statusText');
+    if(statusDot) statusDot.className='dot live';
+    if(statusText) statusText.textContent='Call in progress';
+
+    // IMPORTANT: update the timer immediately.
+    startTimer();
+
+
+    // Start the first CUSTOMER recording immediately.
+    updateTurnState('🎧 CLIENT SPEAKING');
+    await startTurn();
+
+  }catch(error){
+    console.error('Call start failed:',error);
+    isCalling=false;
+    clearInterval(timerInterval);
+    timerInterval=null;
+    document.getElementById('startBtn').disabled=false;
+    document.getElementById('endBtn').disabled=true;
+    updateTurnState('ERROR');
+    showError('Could not start the call:\n\n'+(error.message||error));
+  }
 }
 
 function startTimer(){clearInterval(timerInterval);timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-callStartedAt)/1000);document.getElementById('timer').textContent=fmt(s);},1000);}

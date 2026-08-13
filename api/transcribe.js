@@ -1,16 +1,10 @@
 // ============================================================
 // VERCEL — OPENAI WHISPER TRANSCRIPTION
 // api/transcribe.js
+//
+// Client sends the raw audio bytes with Content-Type audio/webm.
+// This avoids needing a multipart parser for V1.
 // ============================================================
-
-export const config = {
-  api: {
-    bodyParser: false
-  }
-};
-
-const TRANSCRIPTION_URL =
-  'https://api.openai.com/v1/audio/transcriptions';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -53,36 +47,36 @@ export default async function handler(req, res) {
       });
     }
 
-    const contentType =
-      req.headers['content-type'] || 'audio/webm';
+    const rawType = String(req.headers['content-type'] || 'audio/webm')
+      .split(';')[0]
+      .trim()
+      .toLowerCase();
+
+    const mimeType = rawType || 'audio/webm';
+    let extension = 'webm';
+
+    if (mimeType.includes('mp4')) extension = 'mp4';
+    else if (mimeType.includes('mpeg')) extension = 'mp3';
+    else if (mimeType.includes('wav')) extension = 'wav';
+    else if (mimeType.includes('ogg')) extension = 'ogg';
 
     const formData = new FormData();
 
     formData.append(
       'file',
-      new Blob([audioBuffer], { type: contentType }),
-      'customer-turn.webm'
+      new Blob([audioBuffer], { type: mimeType }),
+      'customer-turn.' + extension
     );
 
-    formData.append(
-      'model',
-      'whisper-1'
-    );
-
-    formData.append(
-      'response_format',
-      'json'
-    );
-
-    // Let Whisper auto-detect the spoken language for V1.
-    // This is useful for mixed English/Hindi calls.
+    formData.append('model', 'whisper-1');
+    formData.append('response_format', 'json');
     formData.append(
       'prompt',
       'Mentor Group, STP, ETP, WTP, Commercial RO, Solar, Heat Pump, AMC, O&M, sewage treatment plant, effluent treatment plant, water treatment plant.'
     );
 
     const response = await fetch(
-      TRANSCRIPTION_URL,
+      'https://api.openai.com/v1/audio/transcriptions',
       {
         method: 'POST',
         headers: {
@@ -118,6 +112,7 @@ export default async function handler(req, res) {
       success: true,
       transcript: String(data.text || '').trim()
     });
+
   } catch (error) {
     console.error('Whisper error:', error);
 

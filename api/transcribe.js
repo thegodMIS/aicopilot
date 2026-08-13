@@ -1,11 +1,9 @@
 // ============================================================
-// VERCEL — OPENAI WHISPER TRANSCRIPTION
-// api/transcribe.js
+// VERCEL — MULTILINGUAL TRANSCRIPTION V3
+// Uses current OpenAI speech-to-text model.
 // ============================================================
 
-export const config = {
-  api: { bodyParser: false }
-};
+export const config = { api: { bodyParser: false } };
 
 const OPENAI_URL = 'https://api.openai.com/v1/audio/transcriptions';
 
@@ -37,12 +35,14 @@ export default async function handler(req, res) {
     const extension = mime.includes('ogg') ? 'ogg' : mime.includes('mp4') ? 'mp4' : 'webm';
 
     const form = new FormData();
-    form.append('file', new Blob([audioBuffer], { type: mime }), `customer-turn.${extension}`);
-    form.append('model', 'whisper-1');
+    form.append('file', new Blob([audioBuffer], { type: mime }), `call-turn.${extension}`);
+    form.append('model', 'gpt-transcribe');
     form.append('response_format', 'json');
+    form.append('languages[]', 'en');
+    form.append('languages[]', 'hi');
     form.append(
       'prompt',
-      'Mentor Group, Mentor Water Experts, STP, ETP, WTP, Commercial RO, Solar, Heat Pump, AMC, O&M, sewage treatment plant, effluent treatment plant, water treatment plant.'
+      'Indian English and Hindi sales call for Mentor Group / Mentor Water Experts. Domain words: STP, ETP, WTP, Commercial RO, RO, Solar, Heat Pump, AMC, O&M, sewage treatment plant, effluent treatment plant, water treatment plant, MLD, KLD, KL/day, BOD, COD.'
     );
 
     const response = await fetch(OPENAI_URL, {
@@ -53,28 +53,34 @@ export default async function handler(req, res) {
 
     const text = await response.text();
     let data;
-    try { data = JSON.parse(text); }
-    catch (_) {
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
       return res.status(502).json({
         success: false,
-        error: 'OpenAI returned invalid JSON.',
-        responsePreview: text.slice(0, 1000)
+        error: 'OpenAI returned invalid transcription data.',
+        responsePreview: text.slice(0, 1200)
       });
     }
 
     if (!response.ok) {
       return res.status(response.status).json({
         success: false,
-        error: data?.error?.message || 'Whisper transcription failed.'
+        error: data?.error?.message || 'Transcription failed.'
       });
     }
 
+    const languages = Array.isArray(data.languages)
+      ? data.languages.map(x => typeof x === 'string' ? x : x?.code).filter(Boolean)
+      : [];
+
     return res.status(200).json({
       success: true,
-      transcript: String(data.text || '').trim()
+      transcript: String(data.text || '').trim(),
+      languages
     });
   } catch (error) {
-    console.error('Whisper error:', error);
+    console.error('Transcription error:', error);
     return res.status(500).json({
       success: false,
       error: error.message || 'Unknown transcription error.'

@@ -3,10 +3,6 @@
 // api/copilot.js
 // ============================================================
 
-const APPS_SCRIPT_URL =
-  process.env.APPS_SCRIPT_URL ||
-  'PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE';
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -23,7 +19,9 @@ export default async function handler(req, res) {
     });
   }
 
-  if (APPS_SCRIPT_URL.includes('PASTE_YOUR_')) {
+  const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL;
+
+  if (!APPS_SCRIPT_URL) {
     return res.status(500).json({
       success: false,
       error: 'APPS_SCRIPT_URL is not configured in Vercel.'
@@ -33,6 +31,7 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
+      redirect: 'follow',
       headers: {
         'Content-Type': 'text/plain;charset=utf-8'
       },
@@ -49,13 +48,16 @@ export default async function handler(req, res) {
         success: false,
         error: 'Apps Script returned non-JSON response.',
         status: response.status,
+        finalUrl: response.url || APPS_SCRIPT_URL,
         responsePreview: text.substring(0, 1000)
       });
     }
 
     return res.status(response.ok ? 200 : 502).json(data);
+
   } catch (error) {
     console.error('Apps Script proxy error:', error);
+
     return res.status(500).json({
       success: false,
       error: error.message || 'Unknown proxy error.'

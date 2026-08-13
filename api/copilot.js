@@ -1,6 +1,5 @@
 // ============================================================
-// VERCEL — APPS SCRIPT PROXY
-// api/copilot.js
+// VERCEL — MENTOR GROUP COPILOT PROXY V3
 // ============================================================
 
 export default async function handler(req, res) {
@@ -15,7 +14,10 @@ export default async function handler(req, res) {
 
   const appsScriptUrl = process.env.APPS_SCRIPT_URL;
   if (!appsScriptUrl) {
-    return res.status(500).json({ success: false, error: 'APPS_SCRIPT_URL is not configured in Vercel.' });
+    return res.status(500).json({
+      success: false,
+      error: 'APPS_SCRIPT_URL is not configured in Vercel.'
+    });
   }
 
   try {
@@ -33,9 +35,9 @@ export default async function handler(req, res) {
     } catch (error) {
       return res.status(502).json({
         success: false,
-        error: 'Apps Script returned non-JSON response.',
+        error: 'Apps Script returned non-JSON data.',
         status: response.status,
-        responsePreview: text.slice(0, 1000)
+        responsePreview: text.slice(0, 1200)
       });
     }
 

@@ -11,6 +11,61 @@
 .turnbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}.turnstate{font-size:11px;font-weight:800;color:var(--muted)}.turn-buttons{display:flex;gap:6px;flex-wrap:wrap}.turn-btn{border:1px solid var(--border);background:rgba(255,255,255,.035);color:var(--text);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:10px;font-weight:800}.turn-btn.active{background:rgba(0,212,170,.12);color:var(--aqua);border-color:rgba(0,212,170,.28)}.turn-btn.agent.active{background:rgba(77,159,255,.12);color:var(--blue);border-color:rgba(77,159,255,.28)}
 .transcript{min-height:540px;max-height:650px;overflow:auto;padding:18px;background:#060c17}.empty{color:var(--muted);text-align:center;padding:70px 20px;font-size:12px}.line{padding:10px 12px;margin-bottom:8px;border-radius:8px;background:rgba(255,255,255,.02);font-size:12px;line-height:1.6;white-space:pre-wrap}.line.customer{border-left:3px solid var(--aqua)}.line.agent{border-left:3px solid var(--blue)}.line-meta{font-size:9px;color:var(--muted);margin-bottom:4px}.line-speaker{font-weight:900}.line-speaker.customer{color:var(--aqua)}.line-speaker.agent{color:var(--blue)}.line.lang{font-size:9px;color:var(--muted);margin-top:5px}
 .ai-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.suggestions{min-height:210px;max-height:350px;overflow:auto;padding:14px;background:#060c17}.suggestion{padding:14px;border:1px solid rgba(0,212,170,.18);border-radius:10px;background:rgba(0,212,170,.045)}.suggestion-type{color:var(--aqua);font-size:9px;font-weight:900;text-transform:uppercase;margin-bottom:8px}.suggestion-text{font-size:14px;font-weight:800;line-height:1.5}.suggestion-meta{margin-top:8px;color:var(--muted);font-size:10px;line-height:1.5}.error{display:none;margin-bottom:18px;padding:15px;border:1px solid rgba(255,85,112,.3);background:rgba(255,85,112,.08);color:#ff9aaa;border-radius:10px;font-size:12px;white-space:pre-wrap;line-height:1.55}.small{color:var(--muted);font-size:10px;line-height:1.5}.state-good{color:var(--green)}.state-ai{color:var(--orange)}
+
+.ai-top{
+  background:linear-gradient(180deg,rgba(0,212,170,.09),rgba(0,212,170,.02));
+  border-top:0;
+}
+.suggestion-stage{
+  min-height:220px;
+  max-height:420px;
+  padding:18px;
+  display:flex;
+  align-items:flex-start;
+  background:
+    radial-gradient(circle at top right,rgba(0,212,170,.10),transparent 45%),
+    #060c17;
+}
+.suggestion-stage .empty{
+  width:100%;
+  padding:80px 20px;
+}
+.suggestion-stage .suggestion{
+  width:100%;
+  border-color:rgba(0,212,170,.30);
+  box-shadow:0 12px 30px rgba(0,0,0,.18);
+}
+.suggestion-stage .suggestion-text{
+  font-size:20px;
+  line-height:1.55;
+  letter-spacing:.1px;
+}
+.suggestion-stage .suggestion-type{
+  font-size:10px;
+  letter-spacing:1px;
+}
+.transcript-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 18px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.015);
+}
+.transcript{
+  min-height:300px;
+  max-height:430px;
+}
+.main-panel{
+  min-width:0;
+}
+@media(max-width:980px){
+  .suggestion-stage .suggestion-text{font-size:17px}
+  .transcript{min-height:320px;max-height:480px}
+}
+
 @media(max-width:980px){.grid{grid-template-columns:1fr}.transcript{min-height:400px}}@media(max-width:600px){.nav{padding:0 14px}.page{padding:14px}.buttons{flex-direction:column}.turnbar{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
@@ -45,8 +100,19 @@
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-head"><div class="panel-title">🎙 Full Call Transcript</div><div id="wordCount" class="small">0 words</div></div>
+    <section class="panel main-panel">
+      <div class="ai-head ai-top">
+        <div>
+          <div class="panel-title">⚡ LIVE SALES COPILOT</div>
+          <div class="small">One ready-to-say statement after every customer turn</div>
+        </div>
+        <div id="aiStatus" class="small">Waiting</div>
+      </div>
+
+      <div class="suggestions suggestion-stage" id="suggestions">
+        <div class="empty">Start the call. Your next exact sales statement will appear here.</div>
+      </div>
+
       <div class="turnbar">
         <div id="turnState" class="turnstate">IDLE</div>
         <div class="turn-buttons">
@@ -55,9 +121,16 @@
           <button id="agentBtn" class="turn-btn agent" onclick="setSpeakerMode('agent')" disabled>🗣️ Me</button>
         </div>
       </div>
+
+      <div class="transcript-head">
+        <div>
+          <div class="panel-title">🎙 Full Call Transcript</div>
+          <div class="small">Client and agent turns with timestamps and detected language</div>
+        </div>
+        <div id="wordCount" class="small">0 words</div>
+      </div>
+
       <div class="transcript" id="transcript"><div class="empty">Start a call, then the client turn will be recorded automatically. You can manually switch between Client and Me.</div></div>
-      <div class="ai-head"><div class="panel-title">🧠 AI Coaching</div><div id="aiStatus" class="small">Waiting</div></div>
-      <div class="suggestions" id="suggestions"><div class="empty">The latest next-best action will appear here.</div></div>
     </section>
   </div>
 </main>
@@ -102,7 +175,13 @@ window.addEventListener('load', function(){
 });
 
 function openDashboard(){ window.location.href = DASHBOARD_PATH; }
-function showError(msg){ const el=document.getElementById('errorBox'); el.textContent=msg||'Unknown error'; el.style.display='block'; }
+function showError(msg){
+  const el=document.getElementById('errorBox');
+  if(!el)return;
+  el.textContent=msg||'Unknown error';
+  el.style.display='block';
+  try{el.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}
+}
 function clearError(){ document.getElementById('errorBox').style.display='none'; }
 function escapeHtml(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
 function setDiag(id,value,cls){const el=document.getElementById(id); if(!el)return; el.textContent=value; el.className=cls||'';}
@@ -133,48 +212,10 @@ async function loadInitialData(){
 }
 
 async function apiPost(action,params){
-  let r;
-
-  try{
-    r=await fetch(API_ENDPOINT,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:action,params:params})
-    });
-  }catch(networkError){
-    throw new Error(
-      'Network error while calling the AI backend.\\n\\n' +
-      'Action: ' + action + '\\n' +
-      'Endpoint: ' + API_ENDPOINT + '\\n' +
-      'Details: ' + (networkError.message || networkError)
-    );
-  }
-
+  const r=await fetch(API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,params:params})});
   const text=await r.text();
-
-  let data;
-
-  try{
-    data=JSON.parse(text);
-  }catch(parseError){
-    throw new Error(
-      'Server returned invalid JSON.\\n\\n' +
-      'Action: ' + action + '\\n' +
-      'HTTP status: ' + r.status + '\\n' +
-      'Response: ' + text.slice(0,1200)
-    );
-  }
-
-  if(!r.ok || data.success===false){
-    throw new Error(
-      (data.error || 'Request failed.') +
-      '\\n\\n' +
-      'Action: ' + action +
-      '\\n' +
-      'HTTP status: ' + r.status
-    );
-  }
-
+  let data; try{data=JSON.parse(text);}catch(e){throw new Error('Server returned invalid JSON. '+text.slice(0,400));}
+  if(!r.ok||data.success===false)throw new Error(data.error||'Request failed.');
   return data;
 }
 
@@ -331,7 +372,10 @@ function updateTurnUI(){
   document.getElementById('agentBtn').classList.toggle('active',currentSpeaker==='agent');
   document.getElementById('finishBtn').disabled=!isCalling;
 }
-function updateTurnState(text){document.getElementById('turnState').textContent=text;}
+function updateTurnState(text){
+  const el=document.getElementById('turnState');
+  if(el)el.textContent=text;
+}
 
 function appendTurn(speaker,text,languages){
   const startSec=Math.max(0,Math.floor((Date.now()-callStartedAt)/1000));
@@ -375,46 +419,47 @@ async function requestLiveSuggestion(){
       if(!duplicate){suggestions.unshift(text);suggestions=suggestions.slice(0,5);suggestionCount++;renderSuggestion(s);document.getElementById('aiStatus').textContent='Live coaching ✓';}
       else document.getElementById('aiStatus').textContent='No new coaching';
     }else{renderSuggestion(null);document.getElementById('aiStatus').textContent='No coaching needed';}
-  }catch(e){
-    const msg =
-      e && e.message
-        ? e.message
-        : String(e);
-
-    const aiStatus=document.getElementById('aiStatus');
-    if(aiStatus){
-      aiStatus.textContent='AI error';
-    }
-
-    console.error('Live coaching error:',e);
-
-    showError(
-      'LIVE COACHING FAILED\n\n' +
-      msg
-    );
-
-    updateTurnState('AI ERROR');
-  }
+  }catch(e){document.getElementById('aiStatus').textContent='AI error';showError('Live coaching error:\n\n'+e.message);}
   finally{aiProcessing=false;}
 }
 
 function renderSuggestion(s){
   const box=document.getElementById('suggestions');
-  if(!s||!s.should_suggest){box.innerHTML='<div class="empty">No coaching needed for this turn. Waiting for the next client reply.</div>';return;}
+  if(!box)return;
+  if(!s||!s.should_suggest){
+    box.innerHTML='<div class="empty">No coaching needed for this turn. Waiting for the next client reply.</div>';
+    return;
+  }
+
   const intent=s.customer_intent||'';
   const strategy=s.sales_strategy||'';
   const phase=s.sop_phase||'';
   const note=s.coaching_note||'';
+  const statement=String(s.immediate_suggestion||'');
+
   box.innerHTML='<div class="suggestion current">'+
     '<div class="suggestion-type">SAY THIS</div>'+
-    '<div class="suggestion-text">'+escapeHtml(s.immediate_suggestion||'')+'</div>'+
+    '<div class="suggestion-text">'+escapeHtml(statement)+'</div>'+
     '<div class="suggestion-meta">'+
       (intent?'<strong>Client intent:</strong> '+escapeHtml(intent)+'<br>':'')+
       (strategy?'<strong>Sales angle:</strong> '+escapeHtml(strategy.replaceAll('_',' '))+'<br>':'')+
       (phase?'<strong>SOP:</strong> '+escapeHtml(phase)+' · Priority: '+escapeHtml(s.priority||'medium')+'<br>':'')+
       (note?escapeHtml(note):'')+
     '</div>'+
+    '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:12px">'+
+      '<button class="turn-btn" onclick="copySuggestion()">Copy statement</button>'+
+    '</div>'+
   '</div>';
+}
+
+function copySuggestion(){
+  const el=document.querySelector('.suggestion-text');
+  const text=el?el.textContent.trim():'';
+  if(!text)return;
+  navigator.clipboard?.writeText(text).then(
+    ()=>{const s=document.getElementById('aiStatus'); if(s)s.textContent='Copied ✓';},
+    ()=>{showError('Could not copy the suggestion automatically.');}
+  );
 }
 
 async function endCall(){
